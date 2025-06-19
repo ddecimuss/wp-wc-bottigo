@@ -18,7 +18,86 @@
 <div id="page" class="hfeed site">
 	<?php do_action( 'storefront_before_header' ); ?>
 	<header id="masthead" class="site-header" role="banner" style="<?php storefront_header_styles(); ?>">
-		<div class="col-full">
+		<div
+			id="block-advantages"
+			class="block-type-list-icons block block__block-content advantages">
+			<div class="block__layout">
+				<div
+					class="block__content block-content__container advantages__container">
+					<div
+						class="field field-block-paragraph field__entity-reference-revisions field-label__hidden">
+						<div class="field-block-paragraph__items field__items">
+							<div
+								class="field-paragraph-icon-title field-block-paragraph__item field__item">
+								<div
+									class="paragraph paragraph--type--icon-title paragraph--view-mode--default">
+									<div
+										class="field field-paragraph-image field__image field-label__hidden">
+										<img
+											loading="lazy"
+											width="24"
+											height="25"
+											src="<?php echo get_stylesheet_directory_uri(); ?>/assets/img/dil/a-1.svg"
+											alt="Бесплатная доставка"
+											data-width="24"
+											data-height="25" />
+									</div>
+									<div
+										class="clearfix text-formatted field field-paragraph-text field__text-long field-label__hidden">
+										<p>Доставка в любую точку</p>
+									</div>
+								</div>
+							</div>
+							<div
+								class="field-paragraph-icon-title field-block-paragraph__item field__item">
+								<div
+									class="paragraph paragraph--type--icon-title paragraph--view-mode--default">
+									<div
+										class="field field-paragraph-image field__image field-label__hidden">
+										<img
+											loading="lazy"
+											width="24"
+											height="25"
+											src="<?php echo get_stylesheet_directory_uri(); ?>/assets/img/dil/a-2.svg"
+											alt="Быстрая доставка"
+											data-width="24"
+											data-height="25" />
+									</div>
+									<div
+										class="clearfix text-formatted field field-paragraph-text field__text-long field-label__hidden">
+										<p>Оперативная отправка в день оплаты</p>
+									</div>
+								</div>
+							</div>
+							<div
+								class="field-paragraph-icon-title field-block-paragraph__item field__item">
+								<div
+									class="paragraph paragraph--type--icon-title paragraph--view-mode--default">
+									<div
+										class="field field-paragraph-image field__image field-label__hidden">
+										<img
+											loading="lazy"
+											width="24"
+											height="25"
+											src="<?php echo esc_html(get_stylesheet_directory_uri()); ?>/assets/img/dil/a-3_0.svg"
+											alt="Гарантия на обувь"
+											data-width="24"
+											data-height="25" />
+									</div>
+									<div
+										class="clearfix text-formatted field field-paragraph-text field__text-long field-label__hidden">
+										<p>Гарантия на обувь</p>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="advantages__btn js-close-btn"></div>
+				</div>
+			</div>
+		</div>
+
+        <div class="col-full">
 			<?php // Branding ?>
 			<div class="site-branding">
 				<?php storefront_site_title_or_logo(); ?>

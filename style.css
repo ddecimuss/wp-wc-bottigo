@@ -11,105 +11,216 @@ Text Domain: woo-custom-child
 
 /* Стили для гармоничного вида соц. иконок в меню */
 .menu .social-menu-item {
-    display: inline-block;
-    vertical-align: middle;
-    margin: 0;
-    padding: 0;
+  display: inline-block;
+  vertical-align: middle;
+  margin: 0;
+  padding: 0;
 }
 .menu .social-link {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    padding: 6px 10px;
-    text-decoration: none;
-    color: inherit;
-    transition: background 0.2s;
-    font-size: 15px;
-    line-height: 1.2;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  text-decoration: none;
+  color: inherit;
+  transition: background 0.2s;
+  font-size: 15px;
+  line-height: 1.2;
 }
 .menu .social-link:hover {
-    background: #f5f5f5;
-    border-radius: 6px;
+  background: #f5f5f5;
+  border-radius: 6px;
 }
 
 /* Унифицированный hover для всех пунктов меню */
 .menu > li > a,
 .menu > li > .social-link {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    padding: 6px 10px;
-    text-decoration: none;
-    color: inherit;
-    transition: background 0.2s;
-    font-size: 15px;
-    line-height: 1.2;
-    border-radius: 6px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  text-decoration: none;
+  color: inherit;
+  transition: background 0.2s;
+  font-size: 15px;
+  line-height: 1.2;
+  border-radius: 6px;
 }
 .menu > li > a:hover,
 .menu > li > .social-link:hover,
 .menu > li.current-menu-item > a {
-    background: #f5f5f5;
+  background: #f5f5f5;
 }
 .menu .social-icon {
-    display: block;
-    width: 20px !important;
-    height: 20px !important;
+  display: block;
+  width: 20px !important;
+  height: 20px !important;
 }
 .menu .social-label {
-    font-size: 15px;
-    font-weight: 400;
-    line-height: 1.2;
-    margin-left: 2px;
+  font-size: 15px;
+  font-weight: 400;
+  line-height: 1.2;
+  margin-left: 2px;
 }
 
 /* Для совместимости с основным меню */
 .menu .social-menu-item {
-    vertical-align: middle;
+  vertical-align: middle;
 }
 
 /* Скрыть сумму и количество товаров в корзине в меню */
 .site-header-cart .cart-contents .woocommerce-Price-amount,
 .site-header-cart .cart-contents .count {
-    display: none !important;
+  display: none !important;
 }
 
 /* Оставить только иконку корзины (Font Awesome) */
 @media (min-width: 768px) {
-    .site-header-cart .cart-contents::after {
-        -webkit-font-smoothing: antialiased;
-        -moz-osx-font-smoothing: grayscale;
-        display: inline-block;
-        font-style: normal;
-        font-variant: normal;
-        font-weight: 900;
-        font-family: "Font Awesome 5 Free";
-        content: "\f291";
-        height: 1em;
-        float: right;
-        line-height: 1.618;
-        vertical-align: baseline;
-    }
+  .site-header-cart .cart-contents::after {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    display: inline-block;
+    font-style: normal;
+    font-variant: normal;
+    font-weight: 900;
+    font-family: "Font Awesome 5 Free";
+    content: "\f291";
+    height: 1em;
+    float: right;
+    line-height: 1.618;
+    vertical-align: baseline;
+  }
 }
 
 .cart-link .fa-cart-icon {
-    display: inline-block;
-    font-family: "Font Awesome 5 Free";
-    font-weight: 900;
-    font-style: normal;
-    font-variant: normal;
-    font-size: 20px;
-    line-height: 1;
-    vertical-align: middle;
-    content: "\f291";
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    margin-right: 6px;
+  display: inline-block;
+  font-family: "Font Awesome 5 Free";
+  font-weight: 900;
+  font-style: normal;
+  font-variant: normal;
+  font-size: 20px;
+  line-height: 1;
+  vertical-align: middle;
+  content: "\f291";
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  margin-right: 6px;
 }
 .cart-link .fa-cart-icon:before {
-    content: "\f291";
+  content: "\f291";
 }
-.home.blog .site-header, .home.page:not(.page-template-template-homepage) .site-header, .home.post-type-archive-product .site-header {
-    margin-bottom: 1.435801em;
+.home.blog .site-header,
+.home.page:not(.page-template-template-homepage) .site-header,
+.home.post-type-archive-product .site-header {
+  margin-bottom: 1.435801em;
 }
 
+/* .handheld-navigation ul.menu li {
+    flex-grow: 3;
+    flex-basis: 100%;
+}
+.main-navigation .menu {
+    display: flex;
+    flex-direction: column;
+} */
+
+
+@media (min-width: 768px) {
+    .col-full {
+        display: flex;
+        margin-left: 2.617924em;
+        margin-right: 2.617924em;
+        padding: 0;
+        align-items: center;
+        margin: 0 auto;
+
+    }
+    .woocommerce-active .site-header .site-branding {
+        width: 21%;
+        float: left;
+        margin-right: 0;
+        margin-bottom: 0;
+
+    }
+    .site-search{
+        margin-bottom: 0;
+    }
+
+}
+
+
+.advantages {
+  display: none;
+  background: #f9f9f9;
+  padding: 0.7777777778rem 4.1666666667rem;
+}
+.advantages__container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.advantages .field-block-paragraph {
+  flex-grow: 1;
+}
+.advantages .field-block-paragraph__items {
+  display: flex;
+  justify-content: space-evenly;
+  margin: 0 -0.8333333333rem;
+}
+.advantages .field-block-paragraph__item {
+  padding: 0 0.8333333333rem;
+}
+.advantages .field-paragraph-text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  line-clamp: 1;
+  -webkit-box-orient: vertical;
+}
+.advantages .paragraph--type--icon-title {
+  display: flex;
+  align-items: center;
+}
+.advantages .paragraph--type--icon-title .field-paragraph-image {
+  width: 1.3333333333rem;
+  margin-right: 0.2777777778rem;
+}
+.advantages__btn {
+  cursor: pointer;
+  margin-left: 6.5555555556rem;
+}
+.advantages__btn::before {
+  font-family: "icomoon";
+  font-size: 24px;
+  font-weight: 400;
+  line-height: 1;
+  color: inherit;
+  content: "✖";
+}
+@media screen and (min-width: 1200px) {
+  .advantages__btn::before {
+    font-size: 1.3333333333rem;
+  }
+}
+#block-advantages {
+  max-height: 1000px; /* предполагаемая максимальная высота */
+  opacity: 1;
+  transform: translateY(0);
+  overflow: hidden;
+  transition: max-height 0.6s ease, opacity 0.6s ease, transform 0.6s ease;
+}
+
+#block-advantages.hide {
+  padding: 0 4.1666666667rem;
+  max-height: 0;
+  opacity: 0;
+  transform: translateY(-30px);
+}
+@media (min-width: 1239px) {
+
+  .advantages {
+    display: block;
+  }}
+
+  p{margin: 0 0 0;}
