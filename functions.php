@@ -10,9 +10,13 @@ add_action('after_setup_theme', function() {
     add_theme_support('woocommerce');
 });
 
-// Вставка Instagram и WhatsApp после последнего элемента в primary menu Storefront
+
+// Вставка Instagram, WhatsApp и корзины после последнего элемента в primary и handheld меню Storefront
 add_filter('wp_nav_menu_items', function($items, $args) {
-    if (isset($args->theme_location) && $args->theme_location === 'primary') {
+    if (
+        isset($args->theme_location)
+        && in_array($args->theme_location, ['primary', 'handheld'])
+    ) {
         $items .= PHP_EOL . file_get_contents(get_stylesheet_directory() . '/social-menu-items.php');
     }
     return $items;
@@ -34,3 +38,14 @@ add_action('wp_footer', function() {
 
 // Отключить заголовок <h1 class="woocommerce-products-header__title page-title"> на страницах магазина
 add_filter('woocommerce_show_page_title', '__return_false');
+
+// Подключение собственного JS-файла дочерней темы
+add_action('wp_enqueue_scripts', function() {
+    wp_enqueue_script(
+        'bottigo-child-js',
+        get_stylesheet_directory_uri() . '/js/index.js',
+        array(),
+        filemtime(get_stylesheet_directory() . '/js/index.js'),
+        true
+    );
+});

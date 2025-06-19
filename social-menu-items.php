@@ -14,8 +14,3 @@
         <span class="social-label">WhatsApp</span>
     </a>
 </li>
-<li class="menu-item menu-item-type-custom social-menu-item">
-    <a href="/cart/" class="social-link cart-link" title="Корзина">
-        <span class="fa-cart-icon" aria-hidden="true"></span>
-    </a>
-</li>

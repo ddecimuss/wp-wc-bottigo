@@ -118,9 +118,47 @@
 				?>
 			</nav>
 
-			<?php // Search ?>
-			<div class="site-search">
-				<?php the_widget( 'WC_Widget_Product_Search', 'title=' ); ?>
+            <?php
+            // Компактный поиск с иконкой-кнопкой внутри поля, с сохранением функциональности стандартного поиска WooCommerce
+            if ( function_exists( 'woocommerce_product_search' ) ) {
+                // Используем стандартный виджет WooCommerce поиска товаров, но с кастомным классом для стилизации
+                the_widget(
+                    'WC_Widget_Product_Search',
+                    [],
+                    [
+                        'before_widget' => '<div class="site-search site-search--compact">',
+                        'after_widget'  => '</div>',
+                        'before_title'  => '',
+                        'after_title'   => '',
+                    ]
+                );
+            } else {
+                // Фоллбэк: обычная форма поиска
+            ?>
+            <form role="search" method="get" class="site-search site-search--compact" action="<?php echo esc_url( home_url( '/' ) ); ?>">
+                <label class="screen-reader-text" for="site-search-field"><?php _e( 'Search for:', 'storefront' ); ?></label>
+                <input
+                    type="search"
+                    id="site-search-field"
+                    class="search-field"
+                    placeholder="<?php echo esc_attr_x( 'Поиск товаров…', 'placeholder', 'storefront' ); ?>"
+                    value="<?php echo get_search_query(); ?>"
+                    name="s"
+                />
+                <input type="hidden" name="post_type" value="product" />
+                <button type="submit" class="search-submit" aria-label="<?php esc_attr_e( 'Search', 'storefront' ); ?>">
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true" focusable="false">
+                        <circle cx="9" cy="9" r="7" stroke="#888" stroke-width="2"/>
+                        <line x1="14.5" y1="14.5" x2="19" y2="19" stroke="#888" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                </button>
+            </form>
+            <?php } ?>
+			<?php // Корзина после поиска ?>
+			<div class="header-cart-link">
+				<a href="/cart/" class="social-link cart-link cart-custom" title="Корзина">
+					<span class="fa-cart-icon" aria-hidden="true"></span>
+				</a>
 			</div>
 		</div>
 	</header>
