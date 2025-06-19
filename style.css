@@ -1,0 +1,115 @@
+/*
+Theme Name: Woo Custom Child
+Theme URI: https://example.com/
+Author: Ваше Имя
+Author URI: https://example.com/
+Description: Кастомная дочерняя тема для WooCommerce на базе Storefront
+Version: 1.0.0
+Template: storefront
+Text Domain: woo-custom-child
+*/
+
+/* Стили для гармоничного вида соц. иконок в меню */
+.menu .social-menu-item {
+    display: inline-block;
+    vertical-align: middle;
+    margin: 0;
+    padding: 0;
+}
+.menu .social-link {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 10px;
+    text-decoration: none;
+    color: inherit;
+    transition: background 0.2s;
+    font-size: 15px;
+    line-height: 1.2;
+}
+.menu .social-link:hover {
+    background: #f5f5f5;
+    border-radius: 6px;
+}
+
+/* Унифицированный hover для всех пунктов меню */
+.menu > li > a,
+.menu > li > .social-link {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 10px;
+    text-decoration: none;
+    color: inherit;
+    transition: background 0.2s;
+    font-size: 15px;
+    line-height: 1.2;
+    border-radius: 6px;
+}
+.menu > li > a:hover,
+.menu > li > .social-link:hover,
+.menu > li.current-menu-item > a {
+    background: #f5f5f5;
+}
+.menu .social-icon {
+    display: block;
+    width: 20px !important;
+    height: 20px !important;
+}
+.menu .social-label {
+    font-size: 15px;
+    font-weight: 400;
+    line-height: 1.2;
+    margin-left: 2px;
+}
+
+/* Для совместимости с основным меню */
+.menu .social-menu-item {
+    vertical-align: middle;
+}
+
+/* Скрыть сумму и количество товаров в корзине в меню */
+.site-header-cart .cart-contents .woocommerce-Price-amount,
+.site-header-cart .cart-contents .count {
+    display: none !important;
+}
+
+/* Оставить только иконку корзины (Font Awesome) */
+@media (min-width: 768px) {
+    .site-header-cart .cart-contents::after {
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        display: inline-block;
+        font-style: normal;
+        font-variant: normal;
+        font-weight: 900;
+        font-family: "Font Awesome 5 Free";
+        content: "\f291";
+        height: 1em;
+        float: right;
+        line-height: 1.618;
+        vertical-align: baseline;
+    }
+}
+
+.cart-link .fa-cart-icon {
+    display: inline-block;
+    font-family: "Font Awesome 5 Free";
+    font-weight: 900;
+    font-style: normal;
+    font-variant: normal;
+    font-size: 20px;
+    line-height: 1;
+    vertical-align: middle;
+    content: "\f291";
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    margin-right: 6px;
+}
+.cart-link .fa-cart-icon:before {
+    content: "\f291";
+}
+.home.blog .site-header, .home.page:not(.page-template-template-homepage) .site-header, .home.post-type-archive-product .site-header {
+    margin-bottom: 1.435801em;
+}
+
