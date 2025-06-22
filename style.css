@@ -134,13 +134,14 @@ Text Domain: woo-custom-child
     margin: 0 auto;
   }
   .woocommerce-active .site-header .site-branding {
-    width: 21%;
+    width: 33%;
     float: left;
     margin-right: 0;
     margin-bottom: 0;
   }
   .site-search {
     margin-bottom: 0;
+    width: 16% !important;
   }
   .site-header {
     padding-top: 0;
@@ -295,8 +296,8 @@ p {
   border-radius: 6px;
 }
 .cart-custom {
-    display: none;
-  }
+  display: none;
+}
 .site-content,
 .site-header {
   padding: 0;
@@ -308,7 +309,7 @@ p {
 
   .site-content,
   .site-header {
-    padding: 0 20px;
+    padding: 0;
   }
   .site-search--compact {
     display: flex;
@@ -317,19 +318,15 @@ p {
     margin-right: 10px !important;
     position: relative;
   }
-  
-  .site-branding{
-    margin-right: 15px !important;
-    
-  }
-    .main-navigation {
-        width: 59.913043% !important;
-        float: left;
-        margin-right: 4.347826087%;
-        clear: both
-    }
-}
 
+  .site-branding {
+    margin-right: 15px !important;
+  }
+  .main-navigation {
+    width: 56% !important;
+    margin-right: 10px !important;
+  }
+}
 
 /* Хэдер закончен */
 
@@ -338,11 +335,9 @@ p {
 
 @media (min-width: 768px) {
   .footer__container {
-        max-width: 66.4989378333em;
-        margin: 0 auto;
-
-  }  
-
+    max-width: 66.4989378333em;
+    margin: 0 auto;
+  }
 }
 
 .footer-cta {
@@ -392,9 +387,9 @@ p {
   background-position: 100% 100%;
 }
 @media screen and (min-width: 768px) {
- .footer-logo {
-  margin-bottom: 30px;
-}
+  .footer-logo {
+    margin-bottom: 30px;
+  }
 }
 .footer-logo img {
   max-width: 200px;
@@ -469,6 +464,14 @@ p {
 .copyright-area {
   background: #202020;
   padding: 25px 0;
+  margin-bottom: 69px;
+}
+@media screen and (min-width: 768px) {
+  .copyright-area {
+    background: #202020;
+    padding: 25px 0;
+    margin-bottom: 0px;
+  }
 }
 .copyright-text p {
   margin: 0;
@@ -506,7 +509,6 @@ p {
     padding: 20px 0 0 0;
   }
 
-
   .footer__container {
     display: flex;
     justify-content: space-around;
@@ -518,7 +520,6 @@ p {
   }
 }
 @media (min-width: 1024px) {
-
   .footer-img {
     display: flex;
     padding: 8px 20px;
@@ -535,24 +536,142 @@ p {
     flex-grow: 3;
     row-gap: 20px;
   }
-
 }
 
 @media (min-width: 1024px) {
-  .site-header{
+  .site-header {
     padding: 0;
   }
 }
 
-.site-footer{
+.site-footer {
   padding: 0;
 }
 .site-footer a {
   font-weight: 700;
-    color: #333333;
-    text-decoration: none;
+  color: #333333;
+  text-decoration: none;
 }
 
 .footer-cta {
-    border-bottom:none;
-  }
+  border-bottom: none;
+}
+
+.widget_product_search form.woocommerce-product-search {
+  position: relative;
+  max-width: 100%;
+}
+.widget_product_search input[type="search"] {
+  width: 100%;
+  padding-right: 90px !important;
+  min-width: 0;
+}
+.widget_product_search button[type="submit"] {
+}
+
+.widget_product_search form:not(.wp-block-search) button[type="submit"] {
+  height: 100%;
+  min-width: 80px;
+  border: 0;
+  clip: auto !important;
+  clip-path: border-box !important;
+  height: 46px !important;
+  margin: -1px;
+  overflow: hidden;
+  padding: 0;
+  position: absolute;
+  width: 40px !important;
+  word-wrap: normal !important;
+  top: 1px !important;
+  left: auto !important;
+  right: 0;
+  background: #333;
+  color: #fff;
+  border-radius: 0 8px 8px 0;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  z-index: 2;
+  box-shadow: none;
+  outline: none;
+}
+
+/* --- Мобильное меню: user-friendly стили --- */
+.handheld-navigation .menu {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px 0;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 16px rgba(0,0,0,0.06);
+}
+
+.handheld-navigation .menu > li {
+  margin: 0;
+  padding: 0;
+}
+
+.handheld-navigation .menu > li > a,
+.handheld-navigation .menu .social-link {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 17px;
+  font-weight: 500;
+  color: #222;
+  background: #f7f7f7;
+  border-radius: 8px;
+  padding: 14px 18px;
+  text-decoration: none;
+  transition: background 0.18s, color 0.18s;
+}
+
+.handheld-navigation .menu > li > a:hover,
+.handheld-navigation .menu .social-link:hover {
+  color: #fff;
+}
+
+.handheld-navigation .menu .social-icon {
+  width: 22px !important;
+  height: 22px !important;
+  display: block;
+}
+
+.handheld-navigation .menu .social-label {
+  font-size: 16px;
+  font-weight: 400;
+  margin-left: 2px;
+}
+
+.handheld-navigation .menu .menu-item {
+  border-bottom: 1px solid #ececec;
+}
+.handheld-navigation .menu .menu-item:last-child {
+  border-bottom: none;
+}
+
+/* Увеличить область нажатия для соц. иконок */
+.handheld-navigation .menu .social-link {
+  min-height: 48px;
+}
+
+/* Для выпадающих подменю */
+.handheld-navigation .menu .sub-menu {
+  background: #f5f5f5;
+  border-radius: 8px;
+  margin: 6px 0 0 18px;
+  padding: 6px 0;
+}
+.handheld-navigation .menu .sub-menu li a {
+  font-size: 15px;
+  padding: 10px 18px;
+  border-radius: 6px;
+}
+.handheld-navigation .menu .sub-menu li a:hover {
+  color: #fff;
+}
+.sub-menu{
+    margin: 0 !important;
+    padding: 0 !important;
+}

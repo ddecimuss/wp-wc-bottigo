@@ -8,7 +8,14 @@
 		<div class="footer-logo">
 			<div class="logo noise footer-img">
 				<a href="<?php echo esc_url(home_url('/')); ?>">
-					<p class="logo__icon"><?php storefront_site_title_or_logo(); ?>
+					<p class="logo__icon"><img
+											loading="lazy"
+											width="298"
+											height="54"
+											src="<?php echo esc_html(get_stylesheet_directory_uri()); ?>/assets/img/Logo.SVG"
+											alt="Гарантия на обувь"
+											data-width="298"
+											data-height="54" />
 				</a>
 			</div>
 		</div>
@@ -54,12 +61,13 @@
 		<div class="copyright-area__container">
 
 			<div class="copyright-text">
-				<p>Copyright &copy; 2025, All Right Reserved <a href="https://github.com/ ">Slava</a></p>
+				<p>&copy; 2025, <b>BOTTIGO</b> Интернет-магазин женской обуви</p>
 			</div>
 
 
 		</div>
 	</div>
+	<?php if ( function_exists('storefront_handheld_footer_bar') ) storefront_handheld_footer_bar(); ?>
 	</footer><!-- #colophon -->
 
 	<?php do_action( 'storefront_after_footer' ); ?>
