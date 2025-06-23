@@ -100,7 +100,18 @@
         <div class="col-full">
 			<?php // Branding ?>
 			<div class="site-branding">
-				<?php storefront_site_title_or_logo(); ?>
+				<a href=<?php echo esc_url(home_url('/')); ?>>
+					<img
+											loading="lazy"
+											width="176"
+											height="43"
+											src="<?php echo esc_html(get_stylesheet_directory_uri()); ?>/assets/img/Logo.SVG"
+											alt="Гарантия на обувь"
+											data-width="176"
+											data-height="43" />
+				</a>
+				 
+				 
 			</div>
 
 			<?php // Primary menu + handheld menu для мобильных! ?>

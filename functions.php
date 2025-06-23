@@ -49,3 +49,18 @@ add_action('wp_enqueue_scripts', function() {
         true
     );
 });
+
+
+
+// --- Убрать "Мой аккаунт" из мобильного footer bar Storefront ---
+add_filter('storefront_handheld_footer_bar_links', function($links) {
+    unset($links['my-account']);
+    return $links;
+}, 10);
+
+// --- Отключить регистрацию и вход WooCommerce (только гость) ---
+add_filter('woocommerce_checkout_registration_enabled', '__return_false');
+add_filter('woocommerce_enable_checkout_login_reminder', '__return_false');
+add_filter('woocommerce_enable_myaccount_registration', '__return_false');
+add_filter('woocommerce_myaccount_show_login_form', '__return_false');
+
