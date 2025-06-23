@@ -65,17 +65,25 @@
 			</div>
 
 			<!-- Instagram (кликабельная вся карточка) -->
-			<a href="https://www.instagram.com/ваш_аккаунт/" target="_blank" class="single-cta cta-link">
-				<i class="fab fa-instagram"></i>
+			<a href="https://www.instagram.com/bottigo_official/" 
+			   target="_blank" 
+			   rel="noopener noreferrer" 
+			   class="single-cta cta-link"
+			   aria-label="Подписаться на Instagram BOTTIGO">
+				<i class="fab fa-instagram" aria-hidden="true"></i>
 				<div class="cta-text">
 					<h4>Instagram</h4>
-					<span>@ваш_аккаунт</span>
+					<span>@bottigo_official</span>
 				</div>
 			</a>
 
 			<!-- WhatsApp (кликабельная вся карточка) -->
-			<a href="https://wa.me/79876543210" target="_blank" class="single-cta cta-link">
-				<i class="fab fa-whatsapp"></i>
+			<a href="https://wa.me/79876543210" 
+			   target="_blank" 
+			   rel="noopener noreferrer" 
+			   class="single-cta cta-link"
+			   aria-label="Написать в WhatsApp BOTTIGO">
+				<i class="fab fa-whatsapp" aria-hidden="true"></i>
 				<div class="cta-text">
 					<h4>WhatsApp</h4>
 					<span>+7 (987) 654-32-10</span>

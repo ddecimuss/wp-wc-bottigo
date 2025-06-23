@@ -150,14 +150,14 @@ add_action('wp_head', function() {
             'name' => 'BOTTIGO',
             'description' => 'Интернет-магазин женской обуви',
             'url' => home_url('/'),
-            'logo' => get_stylesheet_directory_uri() . '/assets/img/Logo.SVG',
+            'logo' => home_url(str_replace(ABSPATH, '/', get_stylesheet_directory()) . '/assets/img/Logo.SVG'),
             'address' => [
                 '@type' => 'PostalAddress',
                 'streetAddress' => 'Назарбаева 1',
                 'addressLocality' => 'Казахстан'
             ],
             'sameAs' => [
-                'https://www.instagram.com/ваш_аккаунт/',
+                'https://www.instagram.com/bottigo_official/',
                 'https://wa.me/79876543210'
             ]
         ];
