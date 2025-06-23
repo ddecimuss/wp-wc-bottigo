@@ -20,11 +20,18 @@ add_filter('wp_nav_menu_items', function($items, $args) {
         isset($args->theme_location)
         && in_array($args->theme_location, ['primary', 'handheld'])
     ) {
-        // Cache social menu items to avoid repeated file reads
+        // Cache social menu items to avoid repeated file operations
         static $social_menu_cache = null;
         if ($social_menu_cache === null) {
             $social_file = get_stylesheet_directory() . '/social-menu-items.php';
-            $social_menu_cache = file_exists($social_file) ? file_get_contents($social_file) : '';
+            if (file_exists($social_file)) {
+                // Use output buffering to execute PHP code
+                ob_start();
+                include $social_file;
+                $social_menu_cache = ob_get_clean();
+            } else {
+                $social_menu_cache = '';
+            }
         }
         $items .= PHP_EOL . $social_menu_cache;
     }
