@@ -8,8 +8,11 @@
 <head>
 <meta charset="<?php bloginfo( 'charset' ); ?>">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="profile" href="http://gmpg.org/xfn/11">
+<meta name="format-detection" content="telephone=no">
+<link rel="profile" href="https://gmpg.org/xfn/11">
 <link rel="pingback" href="<?php bloginfo( 'pingback_url' ); ?>">
+<link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+<link rel="dns-prefetch" href="//fonts.googleapis.com">
 <?php wp_head(); ?>
 </head>
 <body <?php body_class(); ?>>
@@ -37,10 +40,9 @@
 											loading="lazy"
 											width="24"
 											height="25"
-											src="<?php echo get_stylesheet_directory_uri(); ?>/assets/img/dil/a-1.svg"
-											alt="Бесплатная доставка"
-											data-width="24"
-											data-height="25" />
+											src="<?php echo esc_url(get_stylesheet_directory_uri()); ?>/assets/img/dil/a-1.svg"
+											alt="Доставка в любую точку"
+											decoding="async" />
 									</div>
 									<div
 										class="clearfix text-formatted field field-paragraph-text field__text-long field-label__hidden">
@@ -58,10 +60,9 @@
 											loading="lazy"
 											width="24"
 											height="25"
-											src="<?php echo get_stylesheet_directory_uri(); ?>/assets/img/dil/a-2.svg"
-											alt="Быстрая доставка"
-											data-width="24"
-											data-height="25" />
+											src="<?php echo esc_url(get_stylesheet_directory_uri()); ?>/assets/img/dil/a-2.svg"
+											alt="Оперативная отправка в день оплаты"
+											decoding="async" />
 									</div>
 									<div
 										class="clearfix text-formatted field field-paragraph-text field__text-long field-label__hidden">
@@ -79,10 +80,9 @@
 											loading="lazy"
 											width="24"
 											height="25"
-											src="<?php echo esc_html(get_stylesheet_directory_uri()); ?>/assets/img/dil/a-3_0.svg"
+											src="<?php echo esc_url(get_stylesheet_directory_uri()); ?>/assets/img/dil/a-3_0.svg"
 											alt="Гарантия на обувь"
-											data-width="24"
-											data-height="25" />
+											decoding="async" />
 									</div>
 									<div
 										class="clearfix text-formatted field field-paragraph-text field__text-long field-label__hidden">
@@ -92,7 +92,7 @@
 							</div>
 						</div>
 					</div>
-					<div class="advantages__btn js-close-btn"></div>
+					<button class="advantages__btn js-close-btn" aria-label="Закрыть баннер с преимуществами" type="button"></button>
 				</div>
 			</div>
 		</div>
@@ -100,18 +100,16 @@
         <div class="col-full">
 			<?php // Branding ?>
 			<div class="site-branding">
-				<a href=<?php echo esc_url(home_url('/')); ?>>
+				<a href="<?php echo esc_url(home_url('/')); ?>" aria-label="BOTTIGO - Главная страница">
 					<img
-											loading="lazy"
-											width="176"
-											height="43"
-											src="<?php echo esc_html(get_stylesheet_directory_uri()); ?>/assets/img/Logo.SVG"
-											alt="Гарантия на обувь"
-											data-width="176"
-											data-height="43" />
+						loading="eager"
+						width="176"
+						height="43"
+						src="<?php echo esc_url(get_stylesheet_directory_uri()); ?>/assets/img/Logo.SVG"
+						alt="BOTTIGO - Интернет-магазин женской обуви"
+						decoding="async"
+						fetchpriority="high" />
 				</a>
-				 
-				 
 			</div>
 
 			<?php // Primary menu + handheld menu для мобильных! ?>
@@ -167,8 +165,9 @@
             <?php } ?>
 			<?php // Корзина после поиска ?>
 			<div class="header-cart-link">
-				<a href="/cart/" class="social-link cart-link cart-custom" title="Корзина">
+				<a href="<?php echo esc_url(wc_get_cart_url()); ?>" class="social-link cart-link cart-custom" aria-label="Корзина покупок">
 					<span class="fa-cart-icon" aria-hidden="true"></span>
+					<span class="screen-reader-text">Корзина</span>
 				</a>
 			</div>
 		</div>

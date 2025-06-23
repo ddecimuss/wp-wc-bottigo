@@ -4,10 +4,106 @@ Theme URI: https://example.com/
 Author: Ваше Имя
 Author URI: https://example.com/
 Description: Кастомная дочерняя тема для WooCommerce на базе Storefront
-Version: 1.0.0
+Version: 1.0.1
 Template: storefront
 Text Domain: woo-custom-child
 */
+
+/* === ACCESSIBILITY IMPROVEMENTS === */
+
+/* Skip link for keyboard navigation */
+.skip-link {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  z-index: 999999;
+  padding: 8px 16px;
+  background: #000;
+  color: #fff;
+  text-decoration: none;
+  font-size: 14px;
+  border-radius: 0 0 4px 0;
+}
+
+.skip-link:focus {
+  left: 6px;
+  top: 6px;
+}
+
+/* Screen reader text */
+.screen-reader-text {
+  clip: rect(1px, 1px, 1px, 1px);
+  position: absolute !important;
+  height: 1px;
+  width: 1px;
+  overflow: hidden;
+  word-wrap: normal !important;
+}
+
+.screen-reader-text:focus {
+  background-color: #f1f1f1;
+  border-radius: 3px;
+  box-shadow: 0 0 2px 2px rgba(0, 0, 0, 0.6);
+  clip: auto !important;
+  color: #21759b;
+  display: block;
+  font-size: 14px;
+  font-weight: bold;
+  height: auto;
+  left: 5px;
+  line-height: normal;
+  padding: 15px 23px 14px;
+  text-decoration: none;
+  top: 5px;
+  width: auto;
+  z-index: 100000;
+}
+
+/* Focus styles for better keyboard navigation */
+a:focus,
+button:focus,
+input:focus,
+textarea:focus,
+select:focus {
+  outline: 2px solid #0073aa;
+  outline-offset: 2px;
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .menu > li > a:hover,
+  .menu > li > .social-link:hover {
+    background: #000;
+    color: #fff;
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  #block-advantages {
+    transition: none !important;
+  }
+}
+
+button,
+input[type="button"],
+input[type="reset"],
+input[type="submit"],
+.button,
+.widget a.button {
+  background-color: #f9f9f9;
+  border-color: #f9f9f9;
+  color: #333333;
+}
 
 /* Стили для гармоничного вида соц. иконок в меню */
 .menu .social-menu-item {
@@ -360,30 +456,28 @@ p {
   justify-content: center;
   align-items: center;
 }
-.footer-cta{
-  
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 25px;
-    padding: 10px 0 20px 0;
+.footer-cta {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 25px;
+  padding: 10px 0 20px 0;
 }
-.single-cta{
-    width: 164px
+.single-cta {
+  width: 164px;
 }
 
 @media screen and (min-width: 560px) {
-  .footer-cta{
-   border-bottom: 1px solid #373636;
-  display: flex;
-  flex-direction: row;
-  justify-content: space-around;
-  flex-wrap: wrap;
-  row-gap: 25px;
-  padding: 20px 0 20px 0;
-
-}
+  .footer-cta {
+    border-bottom: 1px solid #373636;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    row-gap: 25px;
+    padding: 20px 0 20px 0;
+  }
 }
 
 @media (min-width: 768px) {
@@ -392,7 +486,6 @@ p {
     margin: 0 auto;
   }
 }
-
 
 .single-cta i {
   font-size: 30px;
@@ -431,7 +524,6 @@ p {
   background-size: cover;
   background-position: 100% 100%;
 }
-
 
 .footer-logo img {
   max-width: 200px;
@@ -544,15 +636,13 @@ p {
   justify-content: center;
 }
 .footer-logo {
-    padding: 30px 0 0 0;
-    margin-bottom: 30px;
-
-  }
+  padding: 30px 0 0 0;
+  margin-bottom: 30px;
+}
 @media screen and (min-width: 768px) {
   .footer-logo {
     padding: 20px 0 0 0;
     margin-bottom: 30px;
-
   }
 
   .footer__container {

@@ -7,48 +7,44 @@
 	<div class="footer__container">
 		<div class="footer-logo">
 			<div class="logo noise footer-img">
-				<a href="<?php echo esc_url(home_url('/')); ?>">
+				<a href="<?php echo esc_url(home_url('/')); ?>" aria-label="BOTTIGO - Главная страница">
 					<img
-											loading="lazy"
-											width="298"
-											height="54"
-											src="<?php echo esc_html(get_stylesheet_directory_uri()); ?>/assets/img/Logo.SVG"
-											alt="Гарантия на обувь"
-											data-width="298"
-											data-height="54" />
+						loading="lazy"
+						width="298"
+						height="54"
+						src="<?php echo esc_url(get_stylesheet_directory_uri()); ?>/assets/img/Logo.SVG"
+						alt="BOTTIGO - Интернет-магазин женской обуви"
+						decoding="async" />
 				</a>
 			</div>
-			<div class="footer-img-bank">
-				<a href="<?php echo esc_url(home_url('/')); ?>">
-					<p class="logo__icon-bank"><img
-											loading="lazy"
-											width="84"
-											height="54"
-											src="<?php echo esc_html(get_stylesheet_directory_uri()); ?>/assets/img/Kaspi.kz.svg"
-											alt="kaspi"
-											data-width="84"
-											data-height="54" />
-				</a>
-				<a href="<?php echo esc_url(home_url('/')); ?>">
-					<p class="logo__icon-bank"><img
-											loading="lazy"
-											width="84"
-											height="54"
-											src="<?php echo esc_html(get_stylesheet_directory_uri()); ?>/assets/img/Halyk-Bank.svg"
-											alt="halyk"
-											data-width="84"
-											data-height="54" />
-				</a>
-				<a href="<?php echo esc_url(home_url('/')); ?>">
-					<p class="logo__icon-bank"><img
-											loading="lazy"
-											width="54"
-											height="54"
-											src="<?php echo esc_html(get_stylesheet_directory_uri()); ?>/assets/img/visa.svg"
-											alt="halyk"
-											data-width="54"
-											data-height="54" />
-				</a>
+			<div class="footer-img-bank" role="img" aria-label="Принимаемые способы оплаты">
+				<div class="logo__icon-bank">
+					<img
+						loading="lazy"
+						width="84"
+						height="54"
+						src="<?php echo esc_url(get_stylesheet_directory_uri()); ?>/assets/img/Kaspi.kz.svg"
+						alt="Kaspi.kz - способ оплаты"
+						decoding="async" />
+				</div>
+				<div class="logo__icon-bank">
+					<img
+						loading="lazy"
+						width="84"
+						height="54"
+						src="<?php echo esc_url(get_stylesheet_directory_uri()); ?>/assets/img/Halyk-Bank.svg"
+						alt="Halyk Bank - способ оплаты"
+						decoding="async" />
+				</div>
+				<div class="logo__icon-bank">
+					<img
+						loading="lazy"
+						width="54"
+						height="54"
+						src="<?php echo esc_url(get_stylesheet_directory_uri()); ?>/assets/img/visa.svg"
+						alt="Visa - способ оплаты"
+						decoding="async" />
+				</div>
 			</div>
 		</div>
 		<div class="footer-cta">

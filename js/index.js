@@ -1,13 +1,39 @@
-console.log("Bottigo JS loaded");
-// Скрытие блока с преимуществами при клике на кнопку "Закрыть"
-document.addEventListener("DOMContentLoaded", function () {
-  const closeBtn = document.querySelector(".js-close-btn");
-  const block = document.getElementById("block-advantages");
+// Simplified JavaScript for BOTTIGO theme
+(function() {
+  'use strict';
 
-  if (closeBtn && block) {
-    closeBtn.addEventListener("click", () => {
+  // Скрытие блока с преимуществами при клике на кнопку "Закрыть"
+  const initAdvantagesBlock = () => {
+    const closeBtn = document.querySelector(".js-close-btn");
+    const block = document.getElementById("block-advantages");
+
+    if (!closeBtn || !block) return;
+
+    // Accessibility: Handle both click and keyboard events
+    const hideBlock = () => {
       block.classList.add("hide");
-      // Больше ничего не нужно — всё будет плавно уходить и соседние блоки подвинутся
+    };
+
+    closeBtn.addEventListener("click", hideBlock);
+
+    // Keyboard accessibility
+    closeBtn.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        hideBlock();
+      }
     });
+  };
+
+  // Инициализация при готовности DOM
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initAdvantagesBlock);
+  } else {
+    initAdvantagesBlock();
   }
-});
+
+  // Dev log
+  if (window.console && typeof console.log === 'function') {
+    console.log('BOTTIGO theme scripts loaded');
+  }
+})();
