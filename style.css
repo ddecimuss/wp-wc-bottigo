@@ -124,7 +124,20 @@ Text Domain: woo-custom-child
     flex-direction: column;
 } */
 
+.site-header {
+  width: 100%;
+  position: fixed;
+}
+.site-branding {
+  padding: 10px 0 0 0;
+}
+.col-full {
+  padding: 10px 0 0 0;
+}
 @media (min-width: 768px) {
+  .site-header {
+    position: relative;
+  }
   .col-full {
     display: flex;
     margin-left: 2.617924em;
@@ -134,11 +147,13 @@ Text Domain: woo-custom-child
     margin: 0 auto;
   }
   .woocommerce-active .site-header .site-branding {
-    width: 33%;
+    width: 29%;
     float: left;
-    margin-right: 0;
+    margin-right: 15px !important;
     margin-bottom: 0;
+    padding: 0;
   }
+
   .site-search {
     margin-bottom: 0;
     width: 16% !important;
@@ -319,11 +334,8 @@ p {
     position: relative;
   }
 
-  .site-branding {
-    margin-right: 15px !important;
-  }
   .main-navigation {
-    width: 56% !important;
+    width: 53% !important;
     margin-right: 10px !important;
   }
 }
@@ -525,6 +537,18 @@ p {
     padding: 8px 20px;
     width: 270px;
   }
+  .footer-img-bank {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    padding-top: 20px ;
+
+  }
+  .logo__icon-bank{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
   .footer__container {
     display: flex;
     justify-content: space-around;
@@ -604,7 +628,7 @@ p {
   padding: 12px 0;
   background: #fff;
   border-radius: 12px;
-  box-shadow: 0 2px 16px rgba(0,0,0,0.06);
+  box-shadow: 0 2px 16px rgba(0, 0, 0, 0.06);
 }
 
 .handheld-navigation .menu > li {
@@ -671,7 +695,7 @@ p {
 .handheld-navigation .menu .sub-menu li a:hover {
   color: #fff;
 }
-.sub-menu{
-    margin: 0 !important;
-    padding: 0 !important;
+.sub-menu {
+  margin: 0 !important;
+  padding: 0 !important;
 }

@@ -100,8 +100,8 @@
         <div class="col-full">
 			<?php // Branding ?>
 			<div class="site-branding">
-				<!-- <?php storefront_site_title_or_logo(); ?> -->
-				 <img
+				<a href=<?php echo esc_url(home_url('/')); ?>>
+					<img
 											loading="lazy"
 											width="176"
 											height="43"
@@ -109,6 +109,8 @@
 											alt="Гарантия на обувь"
 											data-width="176"
 											data-height="43" />
+				</a><!-- <?php storefront_site_title_or_logo(); ?> -->
+				 
 				 
 			</div>
 

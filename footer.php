@@ -8,7 +8,7 @@
 		<div class="footer-logo">
 			<div class="logo noise footer-img">
 				<a href="<?php echo esc_url(home_url('/')); ?>">
-					<p class="logo__icon"><img
+					<img
 											loading="lazy"
 											width="298"
 											height="54"
@@ -16,6 +16,38 @@
 											alt="Гарантия на обувь"
 											data-width="298"
 											data-height="54" />
+				</a>
+			</div>
+			<div class="footer-img-bank">
+				<a href="<?php echo esc_url(home_url('/')); ?>">
+					<p class="logo__icon-bank"><img
+											loading="lazy"
+											width="64"
+											height="48"
+											src="<?php echo esc_html(get_stylesheet_directory_uri()); ?>/assets/img/Kaspi.kz.svg"
+											alt="kaspi"
+											data-width="96"
+											data-height="48" />
+				</a>
+				<a href="<?php echo esc_url(home_url('/')); ?>">
+					<p class="logo__icon-bank"><img
+											loading="lazy"
+											width="64"
+											height="48"
+											src="<?php echo esc_html(get_stylesheet_directory_uri()); ?>/assets/img/Halyk-Bank.svg"
+											alt="halyk"
+											data-width="96"
+											data-height="48" />
+				</a>
+				<a href="<?php echo esc_url(home_url('/')); ?>">
+					<p class="logo__icon-bank"><img
+											loading="lazy"
+											width="48"
+											height="48"
+											src="<?php echo esc_html(get_stylesheet_directory_uri()); ?>/assets/img/visa.svg"
+											alt="halyk"
+											data-width="48"
+											data-height="48" />
 				</a>
 			</div>
 		</div>
