@@ -109,7 +109,6 @@
 											alt="Гарантия на обувь"
 											data-width="176"
 											data-height="43" />
-				</a><!-- <?php storefront_site_title_or_logo(); ?> -->
 				 
 				 
 			</div>
