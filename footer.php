@@ -22,32 +22,32 @@
 				<a href="<?php echo esc_url(home_url('/')); ?>">
 					<p class="logo__icon-bank"><img
 											loading="lazy"
-											width="64"
-											height="48"
+											width="84"
+											height="54"
 											src="<?php echo esc_html(get_stylesheet_directory_uri()); ?>/assets/img/Kaspi.kz.svg"
 											alt="kaspi"
-											data-width="96"
-											data-height="48" />
+											data-width="84"
+											data-height="54" />
 				</a>
 				<a href="<?php echo esc_url(home_url('/')); ?>">
 					<p class="logo__icon-bank"><img
 											loading="lazy"
-											width="64"
-											height="48"
+											width="84"
+											height="54"
 											src="<?php echo esc_html(get_stylesheet_directory_uri()); ?>/assets/img/Halyk-Bank.svg"
 											alt="halyk"
-											data-width="96"
-											data-height="48" />
+											data-width="84"
+											data-height="54" />
 				</a>
 				<a href="<?php echo esc_url(home_url('/')); ?>">
 					<p class="logo__icon-bank"><img
 											loading="lazy"
-											width="48"
-											height="48"
+											width="54"
+											height="54"
 											src="<?php echo esc_html(get_stylesheet_directory_uri()); ?>/assets/img/visa.svg"
 											alt="halyk"
-											data-width="48"
-											data-height="48" />
+											data-width="54"
+											data-height="54" />
 				</a>
 			</div>
 		</div>

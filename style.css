@@ -344,6 +344,47 @@ p {
 
 /* Стили для футера */
 /*footer */
+.footer-logo {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.footer-img {
+  padding: 20px;
+}
+.footer-img-bank {
+  display: flex;
+  gap: 20px;
+  padding-top: 20px;
+  justify-content: center;
+  align-items: center;
+}
+.footer-cta{
+  
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 25px;
+    padding: 10px 0 20px 0;
+}
+.single-cta{
+    width: 164px
+}
+
+@media screen and (min-width: 560px) {
+  .footer-cta{
+   border-bottom: 1px solid #373636;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  flex-wrap: wrap;
+  row-gap: 25px;
+  padding: 20px 0 20px 0;
+
+}
+}
 
 @media (min-width: 768px) {
   .footer__container {
@@ -352,15 +393,7 @@ p {
   }
 }
 
-.footer-cta {
-  border-bottom: 1px solid #373636;
-  display: flex;
-  flex-direction: row;
-  justify-content: space-around;
-  flex-wrap: wrap;
-  row-gap: 25px;
-  padding: 20px 0 20px 0;
-}
+
 .single-cta i {
   font-size: 30px;
   float: left;
@@ -398,11 +431,8 @@ p {
   background-size: cover;
   background-position: 100% 100%;
 }
-@media screen and (min-width: 768px) {
-  .footer-logo {
-    margin-bottom: 30px;
-  }
-}
+
+
 .footer-logo img {
   max-width: 200px;
 }
@@ -505,25 +535,30 @@ p {
   color: #878787;
 }
 
-.footer-img {
-  display: none;
-}
 .single-cta {
-  flex-basis: 240px;
+  /* flex-basis: 240px; */
 }
 
 .copyright-area__container {
   display: flex;
   justify-content: center;
 }
-@media (min-width: 768px) {
+.footer-logo {
+    padding: 30px 0 0 0;
+    margin-bottom: 30px;
+
+  }
+@media screen and (min-width: 768px) {
   .footer-logo {
     padding: 20px 0 0 0;
+    margin-bottom: 30px;
+
   }
 
   .footer__container {
     display: flex;
     justify-content: space-around;
+    flex-direction: column;
   }
   .footer-cta {
     flex-direction: row;
@@ -541,10 +576,9 @@ p {
     display: flex;
     justify-content: center;
     gap: 10px;
-    padding-top: 20px ;
-
+    padding-top: 20px;
   }
-  .logo__icon-bank{
+  .logo__icon-bank {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -553,6 +587,7 @@ p {
     display: flex;
     justify-content: space-around;
     align-items: center;
+    flex-direction: row;
   }
   .footer-cta {
     flex-direction: row;
@@ -668,13 +703,6 @@ p {
   margin-left: 2px;
 }
 
-.handheld-navigation .menu .menu-item {
-  border-bottom: 1px solid #ececec;
-}
-.handheld-navigation .menu .menu-item:last-child {
-  border-bottom: none;
-}
-
 /* Увеличить область нажатия для соц. иконок */
 .handheld-navigation .menu .social-link {
   min-height: 48px;
@@ -698,4 +726,8 @@ p {
 .sub-menu {
   margin: 0 !important;
   padding: 0 !important;
+}
+
+.handheld-navigation .menu .menu-item {
+  border-bottom: none;
 }
