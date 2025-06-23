@@ -5,7 +5,7 @@
        class="social-link"
        aria-label="Подписаться на Instagram BOTTIGO">
         <img src="<?php echo esc_url(get_stylesheet_directory_uri()); ?>/assets/img/instagram-icon.svg" 
-             alt="" 
+             alt="instagram icon" 
              class="social-icon" 
              width="20" 
              height="20"
@@ -20,7 +20,7 @@
        class="social-link"
        aria-label="Написать в WhatsApp BOTTIGO">
         <img src="<?php echo esc_url(get_stylesheet_directory_uri()); ?>/assets/img/whatsapp-icon.svg" 
-             alt="" 
+             alt="whatsapp icon" 
              class="social-icon" 
              width="20" 
              height="20"
