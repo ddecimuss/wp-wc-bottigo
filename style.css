@@ -822,7 +822,7 @@ p {
   border-bottom: none;
 }
 
-/* === CUSTOM WOOCOMMERCE FILTERS === */
+
 
 /* Submit button styling */
 .bottigo-filters-submit-container {
@@ -942,6 +942,77 @@ p {
   box-shadow: 0 0 0 2px rgba(51, 51, 51, 0.1);
 }
 
+/* Clear filters button customization */
+.wc-block-product-filter-clear-button {
+  margin-bottom: 20px !important;
+}
+
+.wc-block-product-filter-clear-button .wp-block-button__link {
+  /* Reset default styles */
+  background-color: transparent !important;
+  border: 1px solid #333 !important;
+  border-radius: 8px !important;
+  color: #333 !important;
+  
+  /* Flexbox for icon and text alignment */
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 8px !important;
+  
+  /* Typography */
+  font-family: inherit !important;
+  font-size: 16px !important;
+  font-weight: 700 !important;
+  text-decoration: none !important;
+  text-transform: none !important;
+  letter-spacing: normal !important;
+  
+  /* Spacing */
+  padding: 7px 36px !important;
+  width: 100% !important;
+  
+  /* Transitions */
+  transition: all 0.2s ease !important;
+  -webkit-font-smoothing: antialiased !important;
+}
+
+.wc-block-product-filter-clear-button .wp-block-button__link:hover {
+  background-color: #333 !important;
+  color: #ffffff !important;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+.wc-block-product-filter-clear-button .wp-block-button__link:focus {
+  outline: 2px solid #0073aa !important;
+  outline-offset: 2px !important;
+}
+
+/* Add reset icon to clear button */
+
+.wc-block-product-filter-clear-button .wp-block-button__link:hover:before {
+  filter: brightness(0) invert(1);
+}
+
+
+
+/* Make clear button always visible */
+.wc-block-product-filter-active {
+  display: block !important;
+}
+
+.wc-block-product-filter-active[hidden] {
+  display: block !important;
+}
+
+/* Hide removable chips */
+.wp-block-woocommerce-product-filter-removable-chips,
+.wc-block-product-filter-removable-chips,
+.wp-block-product-filter-removable-chips-is-layout-flex {
+  display: none !important;
+}
+
 /* Mobile responsiveness */
 @media (max-width: 768px) {
   .bottigo-filters-submit {
@@ -952,5 +1023,10 @@ p {
   .bottigo-filters-submit-container {
     margin-top: 15px;
     padding-top: 15px;
+  }
+  
+  .wc-block-product-filter-clear-button .wp-block-button__link {
+    padding: 10px 20px !important;
+    font-size: 16px !important;
   }
 }
