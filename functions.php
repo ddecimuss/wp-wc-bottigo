@@ -198,6 +198,7 @@ add_action('wp_enqueue_scripts', function() {
 add_action('wp_head', function() {
     if (is_shop() || is_product_category() || is_product_tag()) {
         echo '<style>
+
         .bottigo-filters-submit-container {
             margin-top: 20px;
             padding-top: 20px;
@@ -231,6 +232,29 @@ add_action('wp_head', function() {
             pointer-events: none;
         }
         
+        /* Custom Clear Filters Button - Always Visible with new design */
+        .wp-block-woocommerce-product-filter-active {
+            display: block !important;
+        }
+        
+        .wp-block-woocommerce-product-filter-active[hidden] {
+            display: block !important;
+        }
+        
+        .wc-block-product-filter--hidden {
+            display: block !important;
+        }
+        
+        /* Hide removable chips */
+        .wp-block-woocommerce-product-filter-removable-chips,
+        .wc-block-product-filter-removable-chips,
+        .wp-block-product-filter-removable-chips-is-layout-flex {
+            display: none !important;
+        }
+        
+      
+        
+        
         /* Hide auto-update functionality */
         .wc-block-product-filters [data-wp-on--change],
         .wc-block-product-filters [data-wp-on--input],
@@ -238,6 +262,12 @@ add_action('wp_head', function() {
         .wc-block-product-filters [data-wp-on--keyup],
         .wc-block-product-filters [data-wp-on--touchend] {
             pointer-events: auto;
+        }
+        
+        /* Smooth transitions for filter elements */
+        .wc-block-product-filter-checkbox-list__item,
+        .wc-block-product-filter-price-slider {
+            transition: opacity 0.2s ease;
         }
         </style>';
     }
@@ -250,20 +280,29 @@ add_action('wp_footer', function() {
         <script>
         // Override WooCommerce Interactivity API to prevent auto-navigation
         document.addEventListener('DOMContentLoaded', function() {
-            // Disable automatic navigation on filter changes
+ 
+            
+            // Comprehensive disable of automatic navigation on all filter changes
             const disableAutoNavigation = () => {
                 // Find all filter elements and remove auto-navigation attributes
-                const filterElements = document.querySelectorAll('[data-wp-on--change], [data-wp-on--input], [data-wp-on--mouseup], [data-wp-on--keyup], [data-wp-on--touchend]');
+                const filterElements = document.querySelectorAll('[data-wp-on--change], [data-wp-on--input], [data-wp-on--mouseup], [data-wp-on--keyup], [data-wp-on--touchend], [data-wp-on--click]');
                 
                 filterElements.forEach(element => {
                     // Store original handlers for potential restoration
                     const originalHandlers = {};
                     
-                    ['data-wp-on--change', 'data-wp-on--input', 'data-wp-on--mouseup', 'data-wp-on--keyup', 'data-wp-on--touchend'].forEach(attr => {
+                    // Remove all navigation-triggering attributes
+                    ['data-wp-on--change', 'data-wp-on--input', 'data-wp-on--mouseup', 'data-wp-on--keyup', 'data-wp-on--touchend', 'data-wp-on--click'].forEach(attr => {
                         if (element.hasAttribute(attr)) {
                             originalHandlers[attr] = element.getAttribute(attr);
-                            // Only disable navigation-related handlers
-                            if (originalHandlers[attr].includes('navigate')) {
+                            const handlerValue = originalHandlers[attr];
+                            
+                            // Remove handlers that cause navigation for all filter types
+                            if (handlerValue.includes('navigate') || 
+                                handlerValue.includes('actions.toggleFilter') ||
+                                handlerValue.includes('actions.setMinPrice') ||
+                                handlerValue.includes('actions.setMaxPrice') ||
+                                handlerValue.includes('actions.debounce')) {
                                 element.removeAttribute(attr);
                             }
                         }
@@ -272,16 +311,29 @@ add_action('wp_footer', function() {
                     // Store original handlers for potential restoration
                     element._originalHandlers = originalHandlers;
                 });
+                
+                // Also disable any form submissions within filters
+                const filterForms = document.querySelectorAll('.wc-block-product-filters form');
+                filterForms.forEach(form => {
+                    form.addEventListener('submit', function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        return false;
+                    });
+                });
             };
             
-            // Run immediately and after any dynamic content loads
+            // Run immediately
             disableAutoNavigation();
+            
+
             
             // Observer for dynamically added content
             const observer = new MutationObserver(function(mutations) {
                 mutations.forEach(function(mutation) {
                     if (mutation.addedNodes.length > 0) {
                         disableAutoNavigation();
+
                     }
                 });
             });
@@ -338,11 +390,33 @@ add_action('wp_footer', function() {
             // Also add after a delay to catch dynamically loaded content
             setTimeout(addSubmitButton, 1000);
             
+            // Make clear button always visible
+            const makeClearButtonVisible = () => {
+                const clearButtonContainer = document.querySelector('.wc-block-product-filter-active');
+                if (clearButtonContainer) {
+                    clearButtonContainer.style.display = 'block';
+                    clearButtonContainer.removeAttribute('hidden');
+                    
+                    // Change button text
+                    const clearButton = clearButtonContainer.querySelector('button');
+                    if (clearButton && clearButton.textContent.trim() === 'Очистить фильтры') {
+                        clearButton.textContent = 'Сбросить фильтры';
+                    }
+                }
+            };
+            
+            // Make clear button visible immediately and periodically
+            makeClearButtonVisible();
+            setTimeout(makeClearButtonVisible, 500);
+            setTimeout(makeClearButtonVisible, 1000);
+            setTimeout(makeClearButtonVisible, 2000);
+            
             // Observer for dynamically added content
             const observer = new MutationObserver(function(mutations) {
                 mutations.forEach(function(mutation) {
                     if (mutation.addedNodes.length > 0) {
                         setTimeout(addSubmitButton, 100);
+                        setTimeout(makeClearButtonVisible, 100);
                     }
                 });
             });
