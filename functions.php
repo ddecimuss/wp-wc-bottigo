@@ -172,6 +172,194 @@ add_action('wp_head', function() {
     }
 });
 
+// === WOOCOMMERCE PRODUCT FILTERS CUSTOMIZATION ===
+
+// Customize WooCommerce product filters to use submit button instead of auto-update
+add_action('wp_enqueue_scripts', function() {
+    if (is_shop() || is_product_category() || is_product_tag()) {
+        wp_enqueue_script(
+            'bottigo-filters-custom',
+            get_stylesheet_directory_uri() . '/js/filters-custom.js',
+            array('jquery'),
+            wp_get_theme()->get('Version'),
+            true
+        );
+        
+        // Add localization for AJAX
+        wp_localize_script('bottigo-filters-custom', 'bottigoFilters', array(
+            'ajaxurl' => admin_url('admin-ajax.php'),
+            'nonce' => wp_create_nonce('bottigo_filters_nonce'),
+            'shop_url' => wc_get_page_permalink('shop')
+        ));
+    }
+});
+
+// Add custom CSS for filters
+add_action('wp_head', function() {
+    if (is_shop() || is_product_category() || is_product_tag()) {
+        echo '<style>
+        .bottigo-filters-submit-container {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #e0e0e0;
+        }
+        
+        .bottigo-filters-submit {
+            width: 100%;
+            padding: 12px 20px;
+            background: #333;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        
+        .bottigo-filters-submit:hover {
+            background: #555;
+        }
+        
+        .bottigo-filters-submit:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        
+        .bottigo-filters-loading {
+            opacity: 0.6;
+            pointer-events: none;
+        }
+        
+        /* Hide auto-update functionality */
+        .wc-block-product-filters [data-wp-on--change],
+        .wc-block-product-filters [data-wp-on--input],
+        .wc-block-product-filters [data-wp-on--mouseup],
+        .wc-block-product-filters [data-wp-on--keyup],
+        .wc-block-product-filters [data-wp-on--touchend] {
+            pointer-events: auto;
+        }
+        </style>';
+    }
+});
+
+// Disable WooCommerce Interactivity API auto-navigation for filters
+add_action('wp_footer', function() {
+    if (is_shop() || is_product_category() || is_product_tag()) {
+        ?>
+        <script>
+        // Override WooCommerce Interactivity API to prevent auto-navigation
+        document.addEventListener('DOMContentLoaded', function() {
+            // Disable automatic navigation on filter changes
+            const disableAutoNavigation = () => {
+                // Find all filter elements and remove auto-navigation attributes
+                const filterElements = document.querySelectorAll('[data-wp-on--change], [data-wp-on--input], [data-wp-on--mouseup], [data-wp-on--keyup], [data-wp-on--touchend]');
+                
+                filterElements.forEach(element => {
+                    // Store original handlers for potential restoration
+                    const originalHandlers = {};
+                    
+                    ['data-wp-on--change', 'data-wp-on--input', 'data-wp-on--mouseup', 'data-wp-on--keyup', 'data-wp-on--touchend'].forEach(attr => {
+                        if (element.hasAttribute(attr)) {
+                            originalHandlers[attr] = element.getAttribute(attr);
+                            // Only disable navigation-related handlers
+                            if (originalHandlers[attr].includes('navigate')) {
+                                element.removeAttribute(attr);
+                            }
+                        }
+                    });
+                    
+                    // Store original handlers for potential restoration
+                    element._originalHandlers = originalHandlers;
+                });
+            };
+            
+            // Run immediately and after any dynamic content loads
+            disableAutoNavigation();
+            
+            // Observer for dynamically added content
+            const observer = new MutationObserver(function(mutations) {
+                mutations.forEach(function(mutation) {
+                    if (mutation.addedNodes.length > 0) {
+                        disableAutoNavigation();
+                    }
+                });
+            });
+            
+            const filtersContainer = document.querySelector('.wc-block-product-filters');
+            if (filtersContainer) {
+                observer.observe(filtersContainer, {
+                    childList: true,
+                    subtree: true
+                });
+            }
+        });
+        </script>
+        <?php
+    }
+});
+
+// Add submit button to product filters
+add_action('wp_footer', function() {
+    if (is_shop() || is_product_category() || is_product_tag()) {
+        ?>
+        <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const addSubmitButton = () => {
+                // Find the filters overlay content
+                const filtersContent = document.querySelector('.wc-block-product-filters__overlay-content');
+                const filtersFooter = document.querySelector('.wc-block-product-filters__overlay-footer');
+                
+                if (filtersContent && !document.querySelector('.bottigo-filters-submit-container')) {
+                    // Create submit button container
+                    const submitContainer = document.createElement('div');
+                    submitContainer.className = 'bottigo-filters-submit-container';
+                    
+                    const submitButton = document.createElement('button');
+                    submitButton.className = 'bottigo-filters-submit';
+                    submitButton.textContent = 'Применить фильтры';
+                    submitButton.type = 'button';
+                    submitButton.setAttribute('aria-label', 'Применить выбранные фильтры товаров');
+                    
+                    submitContainer.appendChild(submitButton);
+                    
+                    // Insert before the footer or at the end of content
+                    if (filtersFooter && filtersFooter.parentNode) {
+                        filtersFooter.parentNode.insertBefore(submitContainer, filtersFooter);
+                    } else {
+                        filtersContent.appendChild(submitContainer);
+                    }
+                }
+            };
+            
+            // Add button immediately
+            addSubmitButton();
+            
+            // Also add after a delay to catch dynamically loaded content
+            setTimeout(addSubmitButton, 1000);
+            
+            // Observer for dynamically added content
+            const observer = new MutationObserver(function(mutations) {
+                mutations.forEach(function(mutation) {
+                    if (mutation.addedNodes.length > 0) {
+                        setTimeout(addSubmitButton, 100);
+                    }
+                });
+            });
+            
+            const body = document.querySelector('body');
+            if (body) {
+                observer.observe(body, {
+                    childList: true,
+                    subtree: true
+                });
+            }
+        });
+        </script>
+        <?php
+    }
+});
+
 // === ACCESSIBILITY IMPROVEMENTS ===
 
 // Add skip link for keyboard navigation
