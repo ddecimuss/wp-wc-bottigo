@@ -566,6 +566,36 @@ add_action('wp_footer', function() {
     }
 });
 
+// === WOOCOMMERCE CATALOG LAYOUT CUSTOMIZATION ===
+
+// Remove default WooCommerce content wrappers and sidebar to prevent duplication
+add_action('template_redirect', function() {
+    // Only apply to WooCommerce shop/catalog pages
+    if (!function_exists('is_woocommerce') || !is_woocommerce()) {
+        return;
+    }
+    
+    // Only apply to shop, category, tag pages (not single product pages)
+    if (!is_shop() && !is_product_category() && !is_product_tag()) {
+        return;
+    }
+    
+    // Remove ALL default WooCommerce wrappers to prevent duplication
+    remove_action('woocommerce_before_main_content', 'woocommerce_output_content_wrapper', 10);
+    remove_action('woocommerce_after_main_content', 'woocommerce_output_content_wrapper_end', 10);
+    
+    // Remove Storefront theme specific wrappers that might cause duplication
+    remove_action('woocommerce_before_main_content', 'storefront_before_content', 10);
+    remove_action('woocommerce_after_main_content', 'storefront_after_content', 10);
+    
+    // Remove any other potential wrapper functions from Storefront
+    remove_action('woocommerce_before_main_content', 'storefront_content_wrapper_start', 10);
+    remove_action('woocommerce_after_main_content', 'storefront_content_wrapper_end', 10);
+    
+    // Remove default sidebar output - we'll handle it in our custom template
+    remove_action('woocommerce_sidebar', 'woocommerce_get_sidebar', 10);
+});
+
 // === ACCESSIBILITY IMPROVEMENTS ===
 
 // Add skip link for keyboard navigation
