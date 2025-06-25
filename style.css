@@ -942,6 +942,146 @@ p {
   box-shadow: 0 0 0 2px rgba(51, 51, 51, 0.1);
 }
 
+/* Все связано с фильтром цены */
+/* Enhanced price slider with click-to-position functionality */
+.bottigo-price-slider-wrapper {
+  position: absolute;
+  width: 100%;
+  height: 40px;
+  margin: 0px 0;
+  cursor: pointer;
+  background: transparent;
+  top: -16px;
+}
+
+.bottigo-price-slider-wrapper input[type="range"] {
+  position: absolute;
+  top: 16px !important;
+  left: 0;
+  width: 100%;
+  height: 6px;
+  margin: 0;
+  padding: 0;
+  background: transparent;
+  pointer-events: none;
+  transform: translateY(-50%);
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.bottigo-price-slider-wrapper input[type="range"]::-webkit-slider-track,
+.bottigo-price-slider-wrapper input[type="range"]::-moz-range-track {
+  width: 100%;
+  height: 6px;
+  background: #dedede;
+  border-radius: 3px;
+  border: none;
+}
+
+.bottigo-price-slider-wrapper input[type="range"]::-webkit-slider-thumb,
+.bottigo-price-slider-wrapper input[type="range"]::-moz-range-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  background: #333;
+  border-radius: 50%;
+  border: 2px solid #fff;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+  pointer-events: auto;
+  transition: all 0.2s ease;
+  position: relative;
+  z-index: 2;
+}
+
+.bottigo-price-slider-wrapper input[type="range"]:hover::-webkit-slider-thumb,
+.bottigo-price-slider-wrapper input[type="range"]:hover::-moz-range-thumb {
+  background: #555;
+  transform: scale(1.1);
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.3);
+}
+
+.bottigo-price-slider-wrapper input[type="range"]:focus::-webkit-slider-thumb,
+.bottigo-price-slider-wrapper input[type="range"]:focus::-moz-range-thumb {
+  outline: 2px solid #0073aa;
+  outline-offset: 2px;
+}
+
+/* Visual range indicator */
+.bottigo-price-slider-wrapper::before {
+  content: '';
+  position: absolute;
+  top: 46%;
+  left: var(--range-min, 0%);
+  width: calc(var(--range-max, 100%) - var(--range-min, 0%));
+  height: 6px;
+  background: #333;
+  border-radius: 3px;
+  transform: translateY(-50%);
+  z-index: 1;
+  transition: all 0.2s ease;
+}
+
+/* Ensure max slider is above min slider */
+.bottigo-price-slider-wrapper input[type="range"].max {
+  z-index: 3;
+}
+
+.bottigo-price-slider-wrapper input[type="range"].min {
+  z-index: 2;
+}
+
+/* Hover effect for the wrapper */
+.bottigo-price-slider-wrapper:hover::before {
+  background: #555;
+}
+
+/* Убираем обводку фокуса на thumb и input */
+.range-bar input:focus,
+.bottigo-price-slider-wrapper input[type="range"]:focus,
+.bottigo-price-slider-wrapper input[type="range"]::-webkit-slider-thumb:focus,
+.bottigo-price-slider-wrapper input[type="range"]::-moz-range-thumb:focus,
+.wc-block-product-filter-price-slider__range input:focus {
+  outline: none !important;
+  box-shadow: none !important;
+  border: none !important;
+  background: transparent !important;
+}
+
+/* Убираем обводку фокуса на thumb в Chrome/Safari и Firefox */
+.bottigo-price-slider-wrapper input[type="range"]::-webkit-slider-thumb:focus,
+.bottigo-price-slider-wrapper input[type="range"]::-moz-range-thumb:focus {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+/* Mobile responsiveness for enhanced slider */
+@media (max-width: 768px) {
+  .bottigo-price-slider-wrapper {
+    height: 44px;
+  }
+  .bottigo-price-slider-wrapper input[type="range"]::-webkit-slider-thumb,
+  .bottigo-price-slider-wrapper input[type="range"]::-moz-range-thumb {
+    width: 24px;
+    height: 24px;
+  }
+}
+
+.wc-block-product-filter-price-slider__range::before,
+.wc-block-product-filter-price-slider__range::after {
+  content: none !important;
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+  background: transparent !important;
+}
+
+.bottigo-price-slider-wrapper input[type="range"] {
+  outline: none;
+  font-size: 0px;
+}
+
 /* Clear filters button customization */
 .wc-block-product-filter-clear-button {
   margin-bottom: 20px !important;

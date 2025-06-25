@@ -163,6 +163,10 @@
                     } else if (element.classList.contains('max')) {
                         element.value = max;
                     }
+                    
+                    // Trigger input event to update visuals for enhanced sliders
+                    const inputEvent = new Event('input', { bubbles: true });
+                    element.dispatchEvent(inputEvent);
                 } else if (element.tagName === 'SELECT') {
                     element.selectedIndex = 0;
                 } else if (element.type === 'text') {
@@ -174,6 +178,27 @@
                         } else if (element.classList.contains('max')) {
                             element.value = rangeInput.getAttribute('max') + ' ₸';
                         }
+                    }
+                }
+            });
+            
+            // Update enhanced sliders visual state
+            const enhancedSliders = document.querySelectorAll('.bottigo-price-slider-wrapper');
+            enhancedSliders.forEach(wrapper => {
+                const minSlider = wrapper.querySelector('input[type="range"].min');
+                const maxSlider = wrapper.querySelector('input[type="range"].max');
+                
+                if (minSlider && maxSlider) {
+                    // Reset to default values
+                    minSlider.value = minSlider.getAttribute('min');
+                    maxSlider.value = maxSlider.getAttribute('max');
+                    
+                    // Update visual representation
+                    const sliderBlock = wrapper.closest('.wp-block-woocommerce-product-filter-price-slider, [data-block-name="woocommerce/product-filter-price-slider"]');
+                    if (sliderBlock) {
+                        // Reset CSS custom properties
+                        sliderBlock.style.setProperty('--range-min', '0%');
+                        sliderBlock.style.setProperty('--range-max', '100%');
                     }
                 }
             });
@@ -272,9 +297,17 @@
         collectFilterData() {
             const data = {};
             
-            // 1. Collect price filter
-            const minPriceInput = document.querySelector('.wc-block-product-filter-price-slider input.min');
-            const maxPriceInput = document.querySelector('.wc-block-product-filter-price-slider input.max');
+            // 1. Collect price filter - support both standard and enhanced sliders
+            let minPriceInput = document.querySelector('.wc-block-product-filter-price-slider input.min, .bottigo-price-slider-wrapper input.min');
+            let maxPriceInput = document.querySelector('.wc-block-product-filter-price-slider input.max, .bottigo-price-slider-wrapper input.max');
+            
+            // Fallback to data-wp-bind selectors for WordPress Interactivity API
+            if (!minPriceInput) {
+                minPriceInput = document.querySelector('input[type="range"][data-wp-bind--value*="minPrice"]');
+            }
+            if (!maxPriceInput) {
+                maxPriceInput = document.querySelector('input[type="range"][data-wp-bind--value*="maxPrice"]');
+            }
             
             if (minPriceInput && maxPriceInput) {
                 const minPrice = minPriceInput.value;
@@ -401,19 +434,164 @@
         }
     }
 
-    // Initialize when DOM is ready
+    // Initialize BottigoFilters only once and always save to window.bottigoFiltersInstance
+    function initBottigoFiltersInstance() {
+        if (!window.bottigoFiltersInstance) {
+            window.bottigoFiltersInstance = new BottigoFilters();
+        }
+    }
+
+    // Инициализация при готовности DOM
     $(document).ready(function() {
-        new BottigoFilters();
+        initBottigoFiltersInstance();
     });
 
-    // Also initialize on AJAX complete (for dynamic content)
+    // Также инициализация при ajaxComplete (для динамического контента)
     $(document).ajaxComplete(function() {
-        // Small delay to ensure content is rendered
         setTimeout(() => {
-            if (!window.bottigoFiltersInstance) {
-                window.bottigoFiltersInstance = new BottigoFilters();
-            }
+            initBottigoFiltersInstance();
         }, 100);
     });
+
+    // === Улучшение слайдера цены (ранее было в filters-slider-enhance.js) ===
+    (function enhancePriceSliderModule($) {
+        function enhancePriceSlider() {
+            const priceSliders = document.querySelectorAll('.wp-block-woocommerce-product-filter-price-slider, [data-block-name="woocommerce/product-filter-price-slider"]');
+            
+            priceSliders.forEach(sliderBlock => {
+                // Skip if already enhanced
+                if (sliderBlock.classList.contains('bottigo-enhanced')) return;
+                sliderBlock.classList.add('bottigo-enhanced');
+                
+                const minInput = sliderBlock.querySelector('input[type="range"].min, input[type="range"][data-wp-bind--value*="minPrice"]');
+                const maxInput = sliderBlock.querySelector('input[type="range"].max, input[type="range"][data-wp-bind--value*="maxPrice"]');
+                
+                if (!minInput || !maxInput) return;
+                
+                // Create a wrapper for the slider track
+                const sliderWrapper = document.createElement('div');
+                sliderWrapper.className = 'bottigo-price-slider-wrapper';
+                
+                // Insert wrapper before the first input
+                minInput.parentNode.insertBefore(sliderWrapper, minInput);
+                
+                // Move both inputs into the wrapper
+                sliderWrapper.appendChild(minInput);
+                sliderWrapper.appendChild(maxInput);
+                
+                // Add click handler to the wrapper
+                sliderWrapper.addEventListener('click', function(e) {
+                    // Don't handle clicks on the actual inputs
+                    if (e.target === minInput || e.target === maxInput) return;
+                    
+                    const rect = sliderWrapper.getBoundingClientRect();
+                    const clickX = e.clientX - rect.left;
+                    const sliderWidth = rect.width;
+                    
+                    // Calculate the percentage of where the click occurred
+                    const clickPercent = Math.max(0, Math.min(1, clickX / sliderWidth));
+                    
+                    // Get min and max values
+                    const minValue = parseFloat(minInput.min);
+                    const maxValue = parseFloat(minInput.max);
+                    const range = maxValue - minValue;
+                    
+                    // Calculate the target value based on click position
+                    const targetValue = minValue + (range * clickPercent);
+                    
+                    // Get current values
+                    const currentMin = parseFloat(minInput.value);
+                    const currentMax = parseFloat(maxInput.value);
+                    
+                    // Determine which slider is closer to the click position
+                    const distanceToMin = Math.abs(targetValue - currentMin);
+                    const distanceToMax = Math.abs(targetValue - currentMax);
+                    
+                    let inputToMove, newValue;
+                    
+                    if (distanceToMin <= distanceToMax) {
+                        // Move min slider, but don't let it go above max
+                        inputToMove = minInput;
+                        newValue = Math.min(targetValue, currentMax);
+                    } else {
+                        // Move max slider, but don't let it go below min
+                        inputToMove = maxInput;
+                        newValue = Math.max(targetValue, currentMin);
+                    }
+                    
+                    // Update the slider value
+                    inputToMove.value = Math.round(newValue);
+                    
+                    // Trigger input event to update any bound values
+                    const inputEvent = new Event('input', { bubbles: true });
+                    inputToMove.dispatchEvent(inputEvent);
+                    
+                    // Update any associated text inputs
+                    updatePriceInputs(sliderBlock);
+                    
+                    // Update visual representation
+                    updateSliderVisuals(sliderBlock);
+                });
+                
+                // Add input event listeners to update visuals
+                [minInput, maxInput].forEach(input => {
+                    input.addEventListener('input', () => {
+                        updatePriceInputs(sliderBlock);
+                        updateSliderVisuals(sliderBlock);
+                    });
+                });
+                
+                // Initial visual update
+                updateSliderVisuals(sliderBlock);
+            });
+        }
+
+        // Update price text inputs based on slider values
+        function updatePriceInputs(sliderBlock) {
+            const minSlider = sliderBlock.querySelector('input[type="range"].min, input[type="range"][data-wp-bind--value*="minPrice"]');
+            const maxSlider = sliderBlock.querySelector('input[type="range"].max, input[type="range"][data-wp-bind--value*="maxPrice"]');
+            const minTextInput = sliderBlock.querySelector('input[type="text"], input[type="number"]');
+            const maxTextInput = sliderBlock.querySelectorAll('input[type="text"], input[type="number"]')[1];
+            
+            if (minSlider && minTextInput) {
+                minTextInput.value = minSlider.value;
+            }
+            if (maxSlider && maxTextInput) {
+                maxTextInput.value = maxSlider.value;
+            }
+        }
+
+        // Update slider visual representation
+        function updateSliderVisuals(sliderBlock) {
+            const minSlider = sliderBlock.querySelector('input[type="range"].min, input[type="range"][data-wp-bind--value*="minPrice"]');
+            const maxSlider = sliderBlock.querySelector('input[type="range"].max, input[type="range"][data-wp-bind--value*="maxPrice"]');
+            
+            if (!minSlider || !maxSlider) return;
+            
+            const min = parseFloat(minSlider.min);
+            const max = parseFloat(minSlider.max);
+            const currentMin = parseFloat(minSlider.value);
+            const currentMax = parseFloat(maxSlider.value);
+            
+            // Calculate percentages
+            const minPercent = ((currentMin - min) / (max - min)) * 100;
+            const maxPercent = ((currentMax - min) / (max - min)) * 100;
+            
+            // Update CSS custom properties for visual styling
+            sliderBlock.style.setProperty('--range-min', minPercent + '%');
+            sliderBlock.style.setProperty('--range-max', maxPercent + '%');
+        }
+
+        // Run on DOM ready and after AJAX
+        $(document).ready(function() {
+            enhancePriceSlider();
+        });
+        $(document).ajaxComplete(function() {
+            setTimeout(() => {
+                enhancePriceSlider();
+            }, 100);
+        });
+
+    })(jQuery);
 
 })(jQuery);
