@@ -6,6 +6,7 @@ add_action('wp_enqueue_scripts', function() {
     
     wp_enqueue_style('parent-style', get_template_directory_uri() . '/style.css', [], $theme_version);
     wp_enqueue_style('child-style', get_stylesheet_directory_uri() . '/style.css', array('parent-style'), $theme_version);
+
 });
 
 // Включение поддержки WooCommerce (Storefront уже поддерживает WooCommerce)
@@ -351,7 +352,7 @@ add_action('wp_footer', function() {
     }
 });
 
-// Add submit button to product filters
+// Add submit button to product filters and enhanced price slider functionality
 add_action('wp_footer', function() {
     if (is_shop() || is_product_category() || is_product_tag()) {
         ?>
@@ -383,12 +384,134 @@ add_action('wp_footer', function() {
                     }
                 }
             };
+
+            // Enhanced price slider functionality - click to position
+            const enhancePriceSlider = () => {
+                const priceSliders = document.querySelectorAll('.wp-block-woocommerce-product-filter-price-slider, [data-block-name="woocommerce/product-filter-price-slider"]');
+                
+                priceSliders.forEach(sliderBlock => {
+                    // Skip if already enhanced
+                    if (sliderBlock.classList.contains('bottigo-enhanced')) return;
+                    sliderBlock.classList.add('bottigo-enhanced');
+                    
+                    const minInput = sliderBlock.querySelector('input[type="range"].min, input[type="range"][data-wp-bind--value*="minPrice"]');
+                    const maxInput = sliderBlock.querySelector('input[type="range"].max, input[type="range"][data-wp-bind--value*="maxPrice"]');
+                    
+                    if (!minInput || !maxInput) return;
+                    
+                    // Create a wrapper for the slider track
+                    const sliderWrapper = document.createElement('div');
+                    sliderWrapper.className = 'bottigo-price-slider-wrapper';
+                    
+                    // Insert wrapper before the first input
+                    minInput.parentNode.insertBefore(sliderWrapper, minInput);
+                    
+                    // Move both inputs into the wrapper
+                    sliderWrapper.appendChild(minInput);
+                    sliderWrapper.appendChild(maxInput);
+                    
+                    // Add click handler to the wrapper
+                    sliderWrapper.addEventListener('click', function(e) {
+                        // Don't handle clicks on the actual inputs
+                        if (e.target === minInput || e.target === maxInput) return;
+                        
+                        const rect = sliderWrapper.getBoundingClientRect();
+                        const clickX = e.clientX - rect.left;
+                        const sliderWidth = rect.width;
+                        
+                        // Calculate the percentage of where the click occurred
+                        const clickPercent = Math.max(0, Math.min(1, clickX / sliderWidth));
+                        
+                        // Get min and max values
+                        const minValue = parseFloat(minInput.min);
+                        const maxValue = parseFloat(minInput.max);
+                        const range = maxValue - minValue;
+                        
+                        // Calculate the target value based on click position
+                        const targetValue = minValue + (range * clickPercent);
+                        
+                        // Get current values
+                        const currentMin = parseFloat(minInput.value);
+                        const currentMax = parseFloat(maxInput.value);
+                        
+                        // Determine which slider is closer to the click position
+                        const distanceToMin = Math.abs(targetValue - currentMin);
+                        const distanceToMax = Math.abs(targetValue - currentMax);
+                        
+                        let inputToMove, newValue;
+                        
+                        if (distanceToMin <= distanceToMax) {
+                            // Move min slider, but don't let it go above max
+                            inputToMove = minInput;
+                            newValue = Math.min(targetValue, currentMax);
+                        } else {
+                            // Move max slider, but don't let it go below min
+                            inputToMove = maxInput;
+                            newValue = Math.max(targetValue, currentMin);
+                        }
+                        
+                        // Update the slider value
+                        inputToMove.value = Math.round(newValue);
+                        
+                        // Trigger input event to update any bound values
+                        const inputEvent = new Event('input', { bubbles: true });
+                        inputToMove.dispatchEvent(inputEvent);
+                        
+                        // Update any associated text inputs
+                        updatePriceInputs(sliderBlock);
+                        
+                        // Update visual representation
+                        updateSliderVisuals(sliderBlock);
+                    });
+                    
+                    // Add input event listeners to update visuals
+                    [minInput, maxInput].forEach(input => {
+                        input.addEventListener('input', () => {
+                            updatePriceInputs(sliderBlock);
+                            updateSliderVisuals(sliderBlock);
+                        });
+                    });
+                    
+                    // Initial visual update
+                    updateSliderVisuals(sliderBlock);
+                });
+            };
             
-            // Add button immediately
-            addSubmitButton();
+            // Update price text inputs based on slider values
+            const updatePriceInputs = (sliderBlock) => {
+                const minSlider = sliderBlock.querySelector('input[type="range"].min, input[type="range"][data-wp-bind--value*="minPrice"]');
+                const maxSlider = sliderBlock.querySelector('input[type="range"].max, input[type="range"][data-wp-bind--value*="maxPrice"]');
+                const minTextInput = sliderBlock.querySelector('input[type="text"], input[type="number"]');
+                const maxTextInput = sliderBlock.querySelectorAll('input[type="text"], input[type="number"]')[1];
+                
+                if (minSlider && minTextInput) {
+                    minTextInput.value = minSlider.value;
+                }
+                if (maxSlider && maxTextInput) {
+                    maxTextInput.value = maxSlider.value;
+                }
+            };
             
-            // Also add after a delay to catch dynamically loaded content
-            setTimeout(addSubmitButton, 1000);
+            // Update slider visual representation
+            const updateSliderVisuals = (sliderBlock) => {
+                const minSlider = sliderBlock.querySelector('input[type="range"].min, input[type="range"][data-wp-bind--value*="minPrice"]');
+                const maxSlider = sliderBlock.querySelector('input[type="range"].max, input[type="range"][data-wp-bind--value*="maxPrice"]');
+                
+                if (!minSlider || !maxSlider) return;
+                
+                const min = parseFloat(minSlider.min);
+                const max = parseFloat(minSlider.max);
+                const currentMin = parseFloat(minSlider.value);
+                const currentMax = parseFloat(maxSlider.value);
+                
+                // Calculate percentages
+                const minPercent = ((currentMin - min) / (max - min)) * 100;
+                const maxPercent = ((currentMax - min) / (max - min)) * 100;
+                
+                // Update CSS custom properties for visual styling
+                sliderBlock.style.setProperty('--range-min', minPercent + '%');
+                sliderBlock.style.setProperty('--range-max', maxPercent + '%');
+            };
             
             // Make clear button always visible
             const makeClearButtonVisible = () => {
@@ -405,18 +528,27 @@ add_action('wp_footer', function() {
                 }
             };
             
-            // Make clear button visible immediately and periodically
+            // Initialize everything
+            addSubmitButton();
+            enhancePriceSlider();
             makeClearButtonVisible();
-            setTimeout(makeClearButtonVisible, 500);
-            setTimeout(makeClearButtonVisible, 1000);
-            setTimeout(makeClearButtonVisible, 2000);
+            
+            // Also add after a delay to catch dynamically loaded content
+            setTimeout(() => {
+                addSubmitButton();
+                enhancePriceSlider();
+                makeClearButtonVisible();
+            }, 1000);
             
             // Observer for dynamically added content
             const observer = new MutationObserver(function(mutations) {
                 mutations.forEach(function(mutation) {
                     if (mutation.addedNodes.length > 0) {
-                        setTimeout(addSubmitButton, 100);
-                        setTimeout(makeClearButtonVisible, 100);
+                        setTimeout(() => {
+                            addSubmitButton();
+                            enhancePriceSlider();
+                            makeClearButtonVisible();
+                        }, 100);
                     }
                 });
             });
