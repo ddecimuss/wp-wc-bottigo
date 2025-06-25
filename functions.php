@@ -593,6 +593,9 @@ add_action('template_redirect', function() {
     // Remove duplicate sorting after products to prevent duplication
     remove_action('woocommerce_after_shop_loop', 'woocommerce_result_count', 20);
     remove_action('woocommerce_after_shop_loop', 'woocommerce_catalog_ordering', 30);
+    
+    // Remove all actions from woocommerce_after_shop_loop to completely prevent any content after products
+    remove_all_actions('woocommerce_after_shop_loop');
 });
 
 // === MOBILE FILTERS BUTTON ===
@@ -833,6 +836,11 @@ add_action('wp_head', function() {
             .mobile-filters-button-wrapper {
                 display: none;
             }
+        }
+        
+        /* Hide any storefront-sorting blocks that appear after products */
+        .products + .storefront-sorting {
+            display: none !important;
         }
     </style>';
 });
