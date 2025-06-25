@@ -1604,16 +1604,7 @@ ul.products::after {
 .woocommerce-ordering {
   margin-bottom: 0 !important;
 }
-.storefront-sorting {
-  background: #fff;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 15px;
-  justify-content: flex-start !important;
-}
+
 /* Clean select styling */
         .storefront-sorting .woocommerce-ordering select.orderby {
             background: #fff;
@@ -1775,4 +1766,7 @@ ul.products::after {
             .mobile-filters-button-wrapper {
                 display: none;
             }
+        }
+        :where(.wc-block-product-filters).is-overlay-opened .wc-block-product-filters__overlay{
+          z-index: 9п9999 !important;
         }
