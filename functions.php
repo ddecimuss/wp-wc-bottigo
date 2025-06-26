@@ -361,7 +361,7 @@ add_action('wp_footer', function() {
             const addSubmitButton = () => {
                 // Find the filters overlay content
                 const filtersContent = document.querySelector('.wc-block-product-filters__overlay-content');
-                const filtersFooter = document.querySelector('.wc-block-product-filters__overlay-footer');
+                
                 
                 if (filtersContent && !document.querySelector('.bottigo-filters-submit-container')) {
                     // Create submit button container
@@ -376,12 +376,7 @@ add_action('wp_footer', function() {
                     
                     submitContainer.appendChild(submitButton);
                     
-                    // Insert before the footer or at the end of content
-                    if (filtersFooter && filtersFooter.parentNode) {
-                        filtersFooter.parentNode.insertBefore(submitContainer, filtersFooter);
-                    } else {
-                        filtersContent.appendChild(submitContainer);
-                    }
+                    
                 }
             };
 
@@ -594,6 +589,258 @@ add_action('template_redirect', function() {
     
     // Remove default sidebar output - we'll handle it in our custom template
     remove_action('woocommerce_sidebar', 'woocommerce_get_sidebar', 10);
+    
+    // Remove duplicate sorting after products to prevent duplication
+    remove_action('woocommerce_after_shop_loop', 'woocommerce_result_count', 20);
+    remove_action('woocommerce_after_shop_loop', 'woocommerce_catalog_ordering', 30);
+    
+    // Remove all actions from woocommerce_after_shop_loop to completely prevent any content after products
+    remove_all_actions('woocommerce_after_shop_loop');
+});
+
+// === MOBILE FILTERS BUTTON ===
+
+// Add mobile filters button to sorting area
+add_action('woocommerce_before_shop_loop', 'add_mobile_filters_button', 25);
+
+function add_mobile_filters_button() {
+    // Only add on shop/catalog pages
+    if (!is_shop() && !is_product_category() && !is_product_tag()) {
+        return;
+    }
+    
+    // Check if we're in the main query and have products
+    if (!woocommerce_product_loop()) {
+        return;
+    }
+    
+    ?>
+    <div class="mobile-filters-button-wrapper">
+        <button type="button" class="mobile-filters-button" aria-label="Открыть фильтры товаров">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <path d="M3 7H21L19 12H5L3 7Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M12 12V20" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                <path d="M8 16L12 20L16 16" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <span>Фильтры</span>
+        </button>
+    </div>
+    <?php
+}
+
+// Enqueue mobile filters JavaScript
+add_action('wp_enqueue_scripts', function() {
+    // Only load on WooCommerce shop pages
+    if (!function_exists('is_woocommerce') || !is_woocommerce()) {
+        return;
+    }
+    
+    if (!is_shop() && !is_product_category() && !is_product_tag()) {
+        return;
+    }
+    
+    // Enqueue the mobile filters script
+    wp_enqueue_script(
+        'mobile-filters',
+        get_stylesheet_directory_uri() . '/js/mobile-filters.js',
+        array(),
+        wp_get_theme()->get('Version'),
+        true
+    );
+});
+
+// Add modern styling for sorting area and mobile filters button
+add_action('wp_head', function() {
+    if (!function_exists('is_woocommerce') || !is_woocommerce()) {
+        return;
+    }
+    
+    if (!is_shop() && !is_product_category() && !is_product_tag()) {
+        return;
+    }
+    
+    echo '<style>
+        /* Clean styling for storefront-sorting area */
+        .storefront-sorting {
+            background: #fff;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 15px;
+            margin-bottom: 20px;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 15px;
+            justify-content: flex-end;
+        }
+        
+        /* Clean select styling */
+        .mobile-filters-container .woocommerce-ordering select.orderby,
+        .mobile-sorting-wrapper .woocommerce-ordering select.orderby {
+            background: #fff;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+            padding: 8px 30px 8px 10px;
+            font-size: 14px;
+            color: #333;
+            min-width: 180px;
+            appearance: none;
+            background-position: right 8px center;
+            background-repeat: no-repeat;
+            background-size: 14px;
+            transition: border-color 0.2s ease;
+        }
+        
+        .storefront-sorting .woocommerce-ordering select.orderby:focus {
+            outline: none;
+            border-color: #333;
+        }
+        
+        .storefront-sorting .woocommerce-ordering select.orderby:hover {
+            border-color: #999;
+        }
+        
+        /* Clean result count styling */
+        .storefront-sorting .woocommerce-result-count {
+            color: #666;
+            font-size: 14px;
+            margin: 0;
+            font-weight: normal;
+        }
+        
+        /* Clean mobile filters button */
+        .mobile-filters-button-wrapper {
+            margin: 0;
+        }
+        
+        .mobile-filters-button {
+            background: #333;
+            border: 1px solid #333;
+            border-radius: 3px;
+            color: #fff;
+            padding: 10px 16px;
+            font-size: 14px;
+            font-weight: normal;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+            min-height: 44px;
+            text-transform: none;
+            letter-spacing: 0;
+        }
+        
+        .mobile-filters-button:hover {
+            background: #555;
+            border-color: #555;
+        }
+        
+        .mobile-filters-button:active,
+        .mobile-filters-button.clicked {
+            background: #222;
+            border-color: #222;
+        }
+        
+        .mobile-filters-button svg {
+            width: 16px;
+            height: 16px;
+            flex-shrink: 0;
+        }
+        
+        .mobile-filters-button span {
+            font-weight: normal;
+        }
+        
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .storefront-sorting {
+                display: flex;
+                width: 100%;
+                max-width: 100%;
+                padding: 0;
+                border: none;
+                background: transparent;
+                margin-bottom: 20px;
+            }
+            
+            .mobile-filters-button-wrapper {
+                flex: 1;
+            }
+            
+            .mobile-filters-button {
+                flex: 1;
+                width: 100%;
+                height: 44px;
+                font-size: 14px;
+                color: #242d4a;
+                background-color: #fff;
+                border: 1px solid #e6e7eb;
+                cursor: pointer;
+                border-radius: 0;
+                transition: background-color 0.2s;
+                justify-content: center;
+                padding: 0;
+                border-right: 0;
+            }
+            
+            .mobile-filters-button:hover {
+                background-color: #f3f3f3;
+            }
+            
+            .mobile-filters-button:active,
+            .mobile-filters-button.clicked {
+                background-color: #f3f3f3;
+            }
+            
+            .storefront-sorting .woocommerce-ordering {
+                flex: 1;
+                margin: 0;
+            }
+            
+            .storefront-sorting .woocommerce-ordering select.orderby {
+                width: 100%;
+                height: 44px;
+                font-size: 14px;
+                color: #242d4a;
+                background-color: #fff;
+                border: 1px solid #e6e7eb;
+                cursor: pointer;
+                border-radius: 0;
+                transition: background-color 0.2s;
+                padding: 0 30px 0 12px;
+                min-width: auto;
+                appearance: none;
+                background-position: right 8px center;
+                background-repeat: no-repeat;
+                background-size: 14px;
+            }
+            
+            .storefront-sorting .woocommerce-ordering select.orderby:hover {
+                background-color: #f3f3f3;
+            }
+            
+            .storefront-sorting .woocommerce-ordering select.orderby:focus {
+                outline: none;
+                background-color: #f3f3f3;
+            }
+            
+            .storefront-sorting .woocommerce-result-count {
+                display: none;
+            }
+        }
+        
+        @media (min-width: 769px) {
+            .mobile-filters-button-wrapper {
+                display: none;
+            }
+        }
+        
+        /* Hide any storefront-sorting blocks that appear after products */
+        .products + .storefront-sorting {
+            display: none !important;
+        }
+    </style>';
 });
 
 // === ACCESSIBILITY IMPROVEMENTS ===
