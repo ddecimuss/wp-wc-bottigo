@@ -909,6 +909,315 @@ add_action('wp_head', function() {
     </style>';
 });
 
+// === STOCK MANAGEMENT FOR FILTERS ===
+
+// Hide out-of-stock products from main queries
+add_action('pre_get_posts', function($query) {
+    // Only apply to frontend main queries
+    if (is_admin() || !$query->is_main_query()) {
+        return;
+    }
+    
+    // Only apply to WooCommerce shop/catalog pages
+    if (!is_shop() && !is_product_category() && !is_product_tag() && !is_product_taxonomy()) {
+        return;
+    }
+    
+    // Get existing meta query or create new one
+    $meta_query = $query->get('meta_query') ?: array();
+    
+    // Add stock status filter
+    $meta_query[] = array(
+        'key' => '_stock_status',
+        'value' => 'instock',
+        'compare' => '='
+    );
+    
+    $query->set('meta_query', $meta_query);
+});
+
+// Filter WooCommerce product queries to show only in-stock products
+add_filter('woocommerce_product_query_meta_query', function($meta_query, $query) {
+    // Only apply to frontend queries
+    if (is_admin()) {
+        return $meta_query;
+    }
+    
+    // Add stock status filter
+    $meta_query[] = array(
+        'key' => '_stock_status',
+        'value' => 'instock',
+        'compare' => '='
+    );
+    
+    return $meta_query;
+}, 10, 2);
+
+// Filter layered navigation widget queries to count only in-stock products
+add_filter('woocommerce_layered_nav_count_maybe_cache', function($cached_counts, $taxonomy, $query_type) {
+    // Don't use cached counts, force recalculation with stock filter
+    return false;
+}, 10, 3);
+
+/**
+ * ЭФФЕКТИВНО пересчитывает количество товаров для layered navigation виджетов,
+ * учитывая только товары "в наличии". Использует оптимизированные SQL-запросы.
+ */
+add_filter('woocommerce_get_layered_nav_filters', 'optimized_layered_nav_filters_by_stock_status');
+
+function optimized_layered_nav_filters_by_stock_status($filters) {
+    if (!is_array($filters) || is_admin()) {
+        return $filters;
+    }
+    
+    global $wpdb;
+    
+    foreach ($filters as $taxonomy => $terms) {
+        if (!is_array($terms) || empty($terms)) {
+            continue;
+        }
+        
+        // Собираем все term_id для текущей таксономии
+        $term_ids = array_keys($terms);
+        
+        if (empty($term_ids)) {
+            continue;
+        }
+        
+        // Создаем один SQL-запрос для всех терминов таксономии
+        $term_ids_placeholder = implode(',', array_fill(0, count($term_ids), '%d'));
+        
+        $sql = $wpdb->prepare(
+            "SELECT
+                tr.term_taxonomy_id AS term_id,
+                COUNT(DISTINCT p.ID) AS product_count
+            FROM
+                {$wpdb->posts} AS p
+            INNER JOIN
+                {$wpdb->term_relationships} AS tr ON p.ID = tr.object_id
+            INNER JOIN
+                {$wpdb->term_taxonomy} AS tt ON tr.term_taxonomy_id = tt.term_taxonomy_id
+            INNER JOIN
+                {$wpdb->postmeta} AS pm ON p.ID = pm.post_id
+            WHERE
+                p.post_type = 'product'
+                AND p.post_status = 'publish'
+                AND pm.meta_key = '_stock_status'
+                AND pm.meta_value = 'instock'
+                AND tt.taxonomy = %s
+                AND tt.term_id IN ({$term_ids_placeholder})
+            GROUP BY
+                tr.term_taxonomy_id",
+            array_merge(array($taxonomy), $term_ids)
+        );
+        
+        // Выполняем запрос
+        $results = $wpdb->get_results($sql, OBJECT_K);
+        
+        // Обновляем счетчики
+        foreach ($term_ids as $term_id) {
+            if (isset($results[$term_id])) {
+                $filters[$taxonomy][$term_id] = (int) $results[$term_id]->product_count;
+            } else {
+                $filters[$taxonomy][$term_id] = 0;
+            }
+            
+            // Удаляем термины с нулевым счетчиком
+            if ($filters[$taxonomy][$term_id] <= 0) {
+                unset($filters[$taxonomy][$term_id]);
+            }
+        }
+        
+        // Удаляем таксономию, если не осталось терминов
+        if (empty($filters[$taxonomy])) {
+            unset($filters[$taxonomy]);
+        }
+    }
+    
+    return $filters;
+}
+
+/**
+ * ЭФФЕКТИВНО пересчитывает количество товаров для каждого атрибута в блоке фильтров,
+ * учитывая только товары "в наличии". Использует один SQL-запрос для всех терминов,
+ * чтобы избежать проблем с производительностью (N+1 запросов).
+ */
+add_filter('woocommerce_blocks_product_filter_attribute_counts', 'optimized_filter_attribute_terms_by_stock_status', 10, 2);
+
+function optimized_filter_attribute_terms_by_stock_status($counts, $request) {
+    // Не выполняем в админ-панели и если нет данных для подсчета
+    if (is_admin() || !is_array($counts) || empty($counts)) {
+        return $counts;
+    }
+
+    global $wpdb;
+
+    // Обрабатываем каждый атрибут отдельно
+    foreach ($counts as $attribute_name => $terms) {
+        if (!is_array($terms) || empty($terms)) {
+            continue;
+        }
+
+        // Шаг 1: Собираем ID всех терминов для текущего атрибута
+        $term_ids = array();
+        $term_slug_to_id_map = array();
+        
+        foreach ($terms as $term_slug => $count) {
+            $term = get_term_by('slug', $term_slug, $attribute_name);
+            if ($term && !is_wp_error($term)) {
+                $term_ids[] = $term->term_id;
+                $term_slug_to_id_map[$term->term_id] = $term_slug;
+            }
+        }
+
+        // Если нет валидных терминов, пропускаем этот атрибут
+        if (empty($term_ids)) {
+            continue;
+        }
+
+        // Шаг 2: Создаем ОДИН SQL-запрос для получения всех счетчиков для текущего атрибута
+        $term_ids_placeholder = implode(',', array_fill(0, count($term_ids), '%d'));
+        
+        $sql = $wpdb->prepare(
+            "SELECT
+                tr.term_taxonomy_id AS term_id,
+                COUNT(DISTINCT p.ID) AS product_count
+            FROM
+                {$wpdb->posts} AS p
+            INNER JOIN
+                {$wpdb->term_relationships} AS tr ON p.ID = tr.object_id
+            INNER JOIN
+                {$wpdb->term_taxonomy} AS tt ON tr.term_taxonomy_id = tt.term_taxonomy_id
+            INNER JOIN
+                {$wpdb->postmeta} AS pm ON p.ID = pm.post_id
+            WHERE
+                p.post_type = 'product'
+                AND p.post_status = 'publish'
+                AND pm.meta_key = '_stock_status'
+                AND pm.meta_value = 'instock'
+                AND tt.taxonomy = %s
+                AND tt.term_id IN ({$term_ids_placeholder})
+            GROUP BY
+                tr.term_taxonomy_id",
+            array_merge(array($attribute_name), $term_ids)
+        );
+
+        // Выполняем запрос и получаем результаты
+        $results = $wpdb->get_results($sql, OBJECT_K);
+
+        // Шаг 3: Обновляем оригинальные счетчики новыми данными
+        foreach ($term_ids as $term_id) {
+            $term_slug = $term_slug_to_id_map[$term_id];
+            
+            if (isset($results[$term_id])) {
+                // Если для термина нашлись товары в наличии, обновляем счетчик
+                $counts[$attribute_name][$term_slug] = (int) $results[$term_id]->product_count;
+            } else {
+                // Если для термина не нашлось товаров в наличии, обнуляем счетчик
+                // Блок WooCommerce автоматически скроет эту опцию
+                $counts[$attribute_name][$term_slug] = 0;
+            }
+        }
+
+        // Удаляем термины с нулевым счетчиком
+        $counts[$attribute_name] = array_filter($counts[$attribute_name], function($count) {
+            return $count > 0;
+        });
+
+        // Удаляем атрибут, если не осталось терминов
+        if (empty($counts[$attribute_name])) {
+            unset($counts[$attribute_name]);
+        }
+    }
+
+    return $counts;
+}
+
+// Filter REST API product queries to show only in-stock products
+add_filter('woocommerce_rest_product_object_query', function($args, $request) {
+    // Add stock status filter to REST API queries
+    if (!isset($args['meta_query'])) {
+        $args['meta_query'] = array();
+    }
+    
+    $args['meta_query'][] = array(
+        'key' => '_stock_status',
+        'value' => 'instock',
+        'compare' => '='
+    );
+    
+    return $args;
+}, 10, 2);
+
+// Add JavaScript to hide filter options with zero count
+add_action('wp_footer', function() {
+    if (!is_shop() && !is_product_category() && !is_product_tag()) {
+        return;
+    }
+    ?>
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Function to hide filter options with zero count
+        const hideEmptyFilterOptions = () => {
+            // Find all filter items with counts
+            const filterItems = document.querySelectorAll('.wc-block-product-filter-attribute .wc-block-components-checkbox__label, .wc-block-product-filter-attribute .wc-block-components-radio-control__option');
+            
+            filterItems.forEach(item => {
+                // Look for count in parentheses
+                const countMatch = item.textContent.match(/\((\d+)\)/);
+                if (countMatch) {
+                    const count = parseInt(countMatch[1], 10);
+                    
+                    // Hide items with zero count
+                    if (count <= 0) {
+                        const parentItem = item.closest('li, .wc-block-components-checkbox, .wc-block-components-radio-control__option');
+                        if (parentItem) {
+                            parentItem.style.display = 'none';
+                        }
+                    }
+                }
+            });
+            
+            // Also handle layered navigation widgets
+            const layeredNavItems = document.querySelectorAll('.woocommerce-widget-layered-nav-list li');
+            layeredNavItems.forEach(item => {
+                const countElement = item.querySelector('.count');
+                if (countElement) {
+                    const countText = countElement.textContent.replace(/[()]/g, '');
+                    const count = parseInt(countText, 10);
+                    
+                    if (count <= 0) {
+                        item.style.display = 'none';
+                    }
+                }
+            });
+        };
+        
+        // Run immediately
+        hideEmptyFilterOptions();
+        
+        // Run after AJAX updates
+        const observer = new MutationObserver(function(mutations) {
+            mutations.forEach(function(mutation) {
+                if (mutation.addedNodes.length > 0) {
+                    hideEmptyFilterOptions();
+                }
+            });
+        });
+        
+        // Observe filter containers
+        const filterContainers = document.querySelectorAll('.wc-block-product-filters, .woocommerce-widget-layered-nav');
+        filterContainers.forEach(container => {
+            observer.observe(container, {
+                childList: true,
+                subtree: true
+            });
+        });
+    });
+    </script>
+    <?php
+});
+
 // === ACCESSIBILITY IMPROVEMENTS ===
 
 // Add skip link for keyboard navigation
