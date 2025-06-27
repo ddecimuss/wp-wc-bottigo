@@ -523,16 +523,81 @@ add_action('wp_footer', function() {
                 }
             };
             
+            // Custom checkbox filter enhancement
+            const enhanceCheckboxFilters = () => {
+                const checkboxLists = document.querySelectorAll('.wc-block-product-filter-checkbox-list__list');
+                
+                checkboxLists.forEach(list => {
+                    // Skip if already enhanced
+                    if (list.classList.contains('bottigo-enhanced-checkboxes')) return;
+                    list.classList.add('bottigo-enhanced-checkboxes');
+                    
+                    const items = list.querySelectorAll('.wc-block-product-filter-checkbox-list__item');
+                    
+                    items.forEach(item => {
+                        const input = item.querySelector('.wc-block-product-filter-checkbox-list__input');
+                        const label = item.querySelector('.wc-block-product-filter-checkbox-list__label');
+                        const text = item.querySelector('.wc-block-product-filter-checkbox-list__text');
+                        const textWrapper = item.querySelector('.wc-block-product-filter-checkbox-list__text-wrapper');
+                        
+                        if (!input || !label || !text) return;
+                        
+                        // Extract count from data-wp-context
+                        let count = '';
+                        try {
+                            const contextData = input.getAttribute('data-wp-context');
+                            if (contextData) {
+                                const context = JSON.parse(contextData);
+                                if (context.item && context.item.count) {
+                                    count = context.item.count;
+                                }
+                            }
+                        } catch (e) {
+                            console.log('Could not parse context data:', e);
+                        }
+                        
+                        // Get filter name from text content or aria-label
+                        const filterName = text.textContent.trim() || input.getAttribute('aria-label') || input.value;
+                        
+                        // Create count element if we have count data
+                        if (count && count > 0) {
+                            const countSpan = document.createElement('span');
+                            countSpan.className = 'filter-count';
+                            countSpan.textContent = `(${count})`;
+                            countSpan.style.cssText = `
+                                color: var(--filter-muted);
+                                font-size: 0.9em;
+                                margin-left: 6px;
+                                font-weight: normal;
+                            `;
+                            
+                            // Add count to the text
+                            text.appendChild(countSpan);
+                        }
+                        
+                        // Ensure proper styling is applied
+                        if (label) {
+                            label.style.display = 'flex';
+                            label.style.justifyContent = 'space-between';
+                            label.style.alignItems = 'center';
+                            label.style.width = '100%';
+                        }
+                    });
+                });
+            };
+            
             // Initialize everything
             addSubmitButton();
             enhancePriceSlider();
             makeClearButtonVisible();
+            enhanceCheckboxFilters();
             
             // Also add after a delay to catch dynamically loaded content
             setTimeout(() => {
                 addSubmitButton();
                 enhancePriceSlider();
                 makeClearButtonVisible();
+                enhanceCheckboxFilters();
             }, 1000);
             
             // Observer for dynamically added content
@@ -543,6 +608,7 @@ add_action('wp_footer', function() {
                             addSubmitButton();
                             enhancePriceSlider();
                             makeClearButtonVisible();
+                            enhanceCheckboxFilters();
                         }, 100);
                     }
                 });
